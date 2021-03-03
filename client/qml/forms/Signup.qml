@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.11
+import "qrc:/scripts/scripts.js" as Scripts
 
 Rectangle {
     id: signupForm
@@ -10,7 +11,8 @@ Rectangle {
     implicitHeight: 360
     implicitWidth: 360
 
-    signal tested
+    signal registered
+    signal returned
     property bool error
 
     ColumnLayout {
@@ -122,7 +124,29 @@ Rectangle {
                     signupForm.error = true
                     errorMessage.text = "Provide email and password"
                 } else {
+                    email = Scripts.validateEmail(email)
+                    if (email === "") {
+                        signupForm.error = true
+                        errorMessage.text = "Invalid email address"
+                    } else {
+                        signupForm.error = false
 
+                        Scripts.makeSignupRequest(email, password, function(xhr) {
+                            if (xhr.status === 0) {
+                                signupForm.error = true
+                                errorMessage.text = "Something bad happened on the server"
+                            } else {
+                                let responseBody = xhr.response
+                                if (xhr.status !== 200) {
+                                    signupForm.error = true
+                                    errorMessage.text = responseBody.message
+                                }
+                                else {
+                                    console.log(JSON.stringify(responseBody))
+                                }
+                            }
+                        })
+                    }
                 }
             }
 
@@ -167,7 +191,7 @@ Rectangle {
         text: qsTr("Button")
 
         onPressed: {
-            tested()
+            returned()
         }
     }
 }

@@ -41,16 +41,14 @@ func TestGetClaims(t *testing.T) {
 		}
 		tokenString, err := GenerateTokenString(&passedClaims, cfg.SecretKey)
 		if err != nil {
-			t.Error("GenerateTokenString returned error:", err)
-			return
+			t.Fatal("GenerateTokenString returned error:", err)
 		}
 		receivedClaims, err := GetClaims(tokenString, cfg.SecretKey)
 		if err != nil {
-			t.Error("GetClaims returned error:", err)
-			return
+			t.Fatal("GetClaims returned error:", err)
 		}
 		if receivedClaims.Email != passedClaims.Email {
-			t.Errorf("got: %s, expected: %s", receivedClaims.Email, passedClaims.Email)
+			t.Fatalf("got: %s, expected: %s", receivedClaims.Email, passedClaims.Email)
 		}
 	})
 

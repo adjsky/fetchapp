@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(testt LANGUAGES CXX)
+project(fetchapp LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -24,31 +24,34 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
+set(CMAKE_PREFIX_PATH "/mnt/hdd/Qt5/5.15.2/gcc_64/lib/cmake")
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 
 set(PROJECT_SOURCES
         cpp/main.cpp
         qml/qml.qrc
+        cpp/TokenManager/tokenmanager.cpp
+        cpp/TokenManager/tokenmanager.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(testt
+    qt_add_executable(fetchapp
         ${PROJECT_SOURCES}
     )
 else()
     if(ANDROID)
-        add_library(testt SHARED
+        add_library(fetchapp SHARED
             ${PROJECT_SOURCES}
         )
     else()
-        add_executable(testt
+        add_executable(fetchapp
           ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_compile_definitions(testt
+target_compile_definitions(fetchapp
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(testt
+target_link_libraries(fetchapp
   PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)

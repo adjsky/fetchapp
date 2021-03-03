@@ -192,23 +192,29 @@ Rectangle {
                             loginForm.error = true
                             errorMessage.text = "Provide email and password"
                         } else {
-                            loginForm.error = false
+                            email = Scripts.validateEmail(email)
+                            if (email === "") {
+                                loginForm.error = true
+                                errorMessage.text = "Invalid email address"
+                            } else {
+                                loginForm.error = false
 
-                            Scripts.makeLoginRequest(email, password, function(xhr) {
-                                if (xhr.status === 0) {
-                                    loginForm.error = true
-                                    errorMessage.text = "Something bad happened on the server"
-                                } else {
-                                    let responseBody = xhr.response
-                                    if (xhr.status !== 200) {
+                                Scripts.makeLoginRequest(email, password, function(xhr) {
+                                    if (xhr.status === 0) {
                                         loginForm.error = true
-                                        errorMessage.text = responseBody.message
+                                        errorMessage.text = "Something bad happened on the server"
+                                    } else {
+                                        let responseBody = xhr.response
+                                        if (xhr.status !== 200) {
+                                            loginForm.error = true
+                                            errorMessage.text = responseBody.message
+                                        }
+                                        else {
+                                            console.log(JSON.stringify(responseBody))
+                                        }
                                     }
-                                    else {
-                                        console.log(responseBody)
-                                    }
-                                }
-                            })
+                                })
+                            }
                         }
                     }
 

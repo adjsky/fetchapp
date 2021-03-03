@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 
 ApplicationWindow {
     id: loginWindow
-    flags: Qt.Window | Qt.CustomizeWindowHint
+    flags: Qt.Window | Qt.FramelessWindowHint
     visible: true
     width: 800
     height: 600
@@ -72,7 +72,7 @@ ApplicationWindow {
         let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
         loginForm.registerButtonPressed.connect(function() {
             let signupForm = forms.push("forms/Signup.qml", StackView.Immediate)
-            signupForm.tested.connect(function() {
+            signupForm.returned.connect(function() {
                 forms.pop(StackView.Immediate)
             })
         })

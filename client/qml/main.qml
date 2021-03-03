@@ -2,13 +2,12 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 ApplicationWindow {
-    flags: Qt.Window | Qt.CustomizeWindowHint
+    flags: Qt.Window | Qt.FramelessWindowHint
 
     id: appWindow
     width: 1280
     height: 720
     visible: false
-    title: qsTr("Hello World")
 
     MouseArea {
         id: moveWindow
