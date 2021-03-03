@@ -2,10 +2,6 @@
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 
-#include <memory>
-
-#include "networkmanager.h"
-
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -22,7 +18,6 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
-    qmlRegisterSingletonType<NetworkManager>("Qt.NetworkManager", 1, 0, "NetworkManager", &NetworkManager::singletonProvider);
     QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
     engine.load(url);
 
