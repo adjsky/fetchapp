@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 )
 
@@ -18,11 +17,11 @@ type Config struct {
 func Get() *Config {
 	certFile := os.Getenv("CERT_FILE")
 	if certFile == "" {
-		log.Fatal("No certification file provided")
+		//log.Fatal("No certification file provided")
 	}
 	keyFile := os.Getenv("KEY_FILE")
 	if keyFile == "" {
-		log.Fatal("No key file provided")
+		//log.Fatal("No key file provided")
 	}
 
 	return &Config{

@@ -1,9 +1,9 @@
-package handler
+package auth
 
 import (
 	"context"
-	"gotest/internal/auth"
-	"log"
+	"gotest/pkg/handlers"
+	"gotest/pkg/responces"
 	"net/http"
 	"strings"
 )
@@ -17,46 +17,38 @@ const (
 )
 
 // AuthMiddleware checks whether user has JWT token included or not
-func AuthMiddleware(next http.Handler) http.Handler {
+func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		authHeader := req.Header.Get("Authorization")
 		authData := strings.Split(authHeader, " ")
 		if len(authData) == 0 {
-			res := ErrorResponce{
+			res := responces.Error{
 				Code:    http.StatusUnauthorized,
 				Message: "no authorization header provided",
 			}
-			Respond(w, &res, res.Code)
+			handlers.Respond(w, &res, res.Code)
 			return
 		}
 		if authData[0] != "Bearer" {
-			res := ErrorResponce{
+			res := responces.Error{
 				Code:    http.StatusUnauthorized,
 				Message: "wrong authorization method",
 			}
-			Respond(w, &res, res.Code)
+			handlers.Respond(w, &res, res.Code)
 			return
 		}
-		claims, err := auth.GetClaims(authData[1])
+		claims, err := GetClaims(authData[1], service.SecretKey)
 		if err != nil {
-			res := ErrorResponce{
+			res := responces.Error{
 				Code:    http.StatusUnauthorized,
 				Message: err.Error(),
 			}
-			Respond(w, &res, res.Code)
+			handlers.Respond(w, &res, res.Code)
 			return
 		}
 
 		req = req.WithContext(context.WithValue(req.Context(), ClaimsID, claims))
 
-		next.ServeHTTP(w, req)
-	})
-}
-
-// LogMiddleware logs every incoming call to the server
-func LogMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		log.Println(req.URL.Path, req.Method, req.UserAgent(), req.RemoteAddr)
 		next.ServeHTTP(w, req)
 	})
 }

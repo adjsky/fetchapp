@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QFontDatabase>
 
 #include <memory>
 
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     qmlRegisterSingletonType<NetworkManager>("Qt.NetworkManager", 1, 0, "NetworkManager", &NetworkManager::singletonProvider);
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
     engine.load(url);
 
     return app.exec();

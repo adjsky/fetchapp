@@ -30,8 +30,6 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 set(PROJECT_SOURCES
         cpp/main.cpp
         qml/qml.qrc
-        cpp/networkmanager.cpp
-        cpp/networkmanager.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 ApplicationWindow {
-    property QtObject loginWindow
     flags: Qt.Window | Qt.CustomizeWindowHint
 
     id: appWindow
@@ -22,7 +21,7 @@ ApplicationWindow {
 
         DragHandler {
             target: null
-            onActiveChanged: if (active) { loginWindow.startSystemMove() }
+            onActiveChanged: if (active) { appWindow.startSystemMove() }
         }
     }
 
@@ -44,12 +43,12 @@ ApplicationWindow {
 
     Component.onCompleted: {
         let loginComponent = Qt.createComponent("Login.qml")
-        loginWindow = loginComponent.createObject(appWindow)
+        let loginWindow = loginComponent.createObject(appWindow)
         loginWindow.show()
 
-        loginWindow.logined.connect(function() {
-            loginWindow.destroy()
-            appWindow.show()
-        })
+        //loginWindow.logined.connect(function() {
+        //    loginWindow.destroy()
+        //    appWindow.show()
+        //})
     }
 }
