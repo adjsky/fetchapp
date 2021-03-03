@@ -10,7 +10,7 @@ type UserClaims struct {
 	jwt.StandardClaims
 }
 
-// GenerateTokenString return JWT string that is passed to client
+// GenerateTokenString returns JWT string that is passed to client
 func GenerateTokenString(claims *UserClaims, secretKey []byte) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString(secretKey)

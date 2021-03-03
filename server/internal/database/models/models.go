@@ -1,6 +1,6 @@
 package models
 
-// User model stored in database
+// User model is stored in database
 type User struct {
 	ID       uint
 	Email    string

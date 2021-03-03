@@ -13,7 +13,7 @@ func Respond(w http.ResponseWriter, res interface{}, statusCode int) {
 	json.NewEncoder(w).Encode(res)
 }
 
-// NotFound called when client tries to access wrong resource
+// NotFound is called when a client tries to access wrong resource
 func NotFound(w http.ResponseWriter, req *http.Request) {
 	res := responces.Error{
 		Code:    http.StatusNotFound,
