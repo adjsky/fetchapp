@@ -1,4 +1,5 @@
 client/CMakeLists.txt.user
+client/tests/CMakeLists.txt.user
 build-client-Desktop_Qt_5_15_2_GCC_64bit-Debug/*
 server/env.sh
 server/database.db

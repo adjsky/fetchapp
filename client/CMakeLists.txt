@@ -24,7 +24,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-set(CMAKE_PREFIX_PATH "/mnt/hdd/Qt5/5.15.2/gcc_64/lib/cmake")
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 
