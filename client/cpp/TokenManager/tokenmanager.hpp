@@ -9,6 +9,7 @@ class TokenManager : public QObject
 public:
     explicit TokenManager(QObject *parent = nullptr);
 
+public:
     Q_INVOKABLE void saveToken(const QString& token);
     Q_INVOKABLE const QString& getToken();
 
