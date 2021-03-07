@@ -11,8 +11,18 @@ Rectangle {
     implicitHeight: 360
     implicitWidth: 360
 
+    signal logined(string token)
     signal registerButtonPressed
     property bool error
+
+    MouseArea {
+        anchors.fill: parent
+
+        onClicked: {
+            emailField.focus = false;
+            passwordField.focus = false;
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -95,8 +105,6 @@ Rectangle {
                     placeholderText: qsTr("Password")
                     selectByMouse: true
                     echoMode: TextInput.Password
-
-
 
                     background: Rectangle {
                         id: passwordFieldBackground
@@ -199,19 +207,20 @@ Rectangle {
                             } else {
                                 loginForm.error = false
 
-                                Scripts.makeLoginRequest(email, password, function(xhr) {
-                                    if (xhr.status === 0) {
-                                        loginForm.error = true
-                                        errorMessage.text = "Something bad happened on the server"
-                                    } else {
-                                        let responseBody = xhr.response
-                                        if (xhr.status !== 200) {
+                                let netManager = new NetworkManager("http://localhost:8080/login");
+                                netManager.makeRequest("POST", JSON.stringify({ "email": email, "password": password }))
+                                netManager.finished.connect(function(error, data) {
+                                    if (error === "") {
+                                        let response = JSON.parse(data)
+                                        if (response.code !== 200) {
                                             loginForm.error = true
-                                            errorMessage.text = responseBody.message
+                                            errorMessage.text = response.message
+                                        } else {
+                                            logined(response.token)
                                         }
-                                        else {
-                                            console.log(JSON.stringify(responseBody))
-                                        }
+                                    } else {
+                                        loginForm.error = true
+                                        errorMessage.text = error
                                     }
                                 })
                             }

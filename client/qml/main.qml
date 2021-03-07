@@ -43,11 +43,10 @@ ApplicationWindow {
     Component.onCompleted: {
         let loginComponent = Qt.createComponent("Login.qml")
         let loginWindow = loginComponent.createObject(appWindow)
+        loginWindow.tokenReceived.connect(function() {
+            loginWindow.destroy()
+            appWindow.show()
+        })
         loginWindow.show()
-
-        //loginWindow.logined.connect(function() {
-        //    loginWindow.destroy()
-        //    appWindow.show()
-        //})
     }
 }

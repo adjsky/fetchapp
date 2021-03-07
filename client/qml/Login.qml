@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import TokenManager 1.0
 
 ApplicationWindow {
     id: loginWindow
@@ -8,7 +9,7 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 600
-    signal logined
+    signal tokenReceived
 
     Rectangle {
         id: background
@@ -38,7 +39,9 @@ ApplicationWindow {
 
         Image {
             id: closeButton
-            source: "qrc:/images/close1.svg"
+            width: 24
+            height: 24
+            source: "images/close1.svg"
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.rightMargin: 5
@@ -70,24 +73,19 @@ ApplicationWindow {
 
     Component.onCompleted: {
         let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
+        loginForm.logined.connect(function(token) {
+                                      TokenManager.saveToken(token)
+                                      tokenReceived()
+                                  })
         loginForm.registerButtonPressed.connect(function() {
             let signupForm = forms.push("forms/Signup.qml", StackView.Immediate)
+            signupForm.registered.connect(function(token) {
+                                              TokenManager.saveToken(token)
+                                              tokenReceived()
+                                          })
             signupForm.returned.connect(function() {
-                forms.pop(StackView.Immediate)
-            })
+                                            forms.pop(StackView.Immediate)
+                                        })
         })
     }
-
-    //        DropShadow {
-    //            anchors.fill: header
-    //            radius: 5
-    //            verticalOffset: 5
-    //            source: header
-    //        }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.9}
-}
-##^##*/

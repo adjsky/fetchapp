@@ -11,9 +11,18 @@ Rectangle {
     implicitHeight: 360
     implicitWidth: 360
 
-    signal registered
+    signal registered(string token)
     signal returned
     property bool error
+
+    MouseArea {
+        anchors.fill: parent
+
+        onClicked: {
+            emailField.focus = false;
+            passwordField.focus = false;
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -28,10 +37,10 @@ Rectangle {
         }
 
         Item {
-            Layout.bottomMargin: 50
-            Layout.minimumHeight: 95
+            Layout.bottomMargin: 25
+            Layout.minimumHeight: 125
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.preferredHeight: 95
+            Layout.preferredHeight: 125
             Layout.fillWidth: true
             ColumnLayout {
                 anchors.fill: parent
@@ -102,6 +111,49 @@ Rectangle {
                     Layout.minimumHeight: 35
                     Layout.preferredHeight: 35
                 }
+
+                Item {
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.rightMargin: 25
+                    Layout.leftMargin: 25
+                    Layout.minimumHeight: 18
+                    Layout.preferredHeight: 18
+                    Layout.fillWidth: true
+
+                    Label {
+                        color: "#989b9c"
+                        text: "Already have an account"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        font.family: "Roboto"
+                        font.pointSize: 10
+
+                        background: Rectangle {
+                            width: parent.width
+                            height: 1
+                            anchors.bottom: parent.bottom
+                            opacity: accountButtonArea.containsMouse ? 1 : 0
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 300
+                                    easing.type: Easing.InOutCubic
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: accountButtonArea
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+
+                            onClicked: {
+                                returned()
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -131,19 +183,20 @@ Rectangle {
                     } else {
                         signupForm.error = false
 
-                        Scripts.makeSignupRequest(email, password, function(xhr) {
-                            if (xhr.status === 0) {
-                                signupForm.error = true
-                                errorMessage.text = "Something bad happened on the server"
-                            } else {
-                                let responseBody = xhr.response
-                                if (xhr.status !== 200) {
+                        let netManager = new NetworkManager("http://localhost:8080/signup");
+                        netManager.makeRequest("POST", JSON.stringify({ "email": email, "password": password }))
+                        netManager.finished.connect(function(error, data) {
+                            if (error === "") {
+                                let response = JSON.parse(data)
+                                if (response.code !== 200) {
                                     signupForm.error = true
-                                    errorMessage.text = responseBody.message
+                                    errorMessage.text = response.message
+                                } else {
+                                    registered(response.token)
                                 }
-                                else {
-                                    console.log(JSON.stringify(responseBody))
-                                }
+                            } else {
+                                signupForm.error = true
+                                errorMessage.text = error
                             }
                         })
                     }
@@ -183,15 +236,6 @@ Rectangle {
                     }
                 }
             }
-        }
-    }
-
-    Button {
-        id: button
-        text: qsTr("Button")
-
-        onPressed: {
-            returned()
         }
     }
 }
