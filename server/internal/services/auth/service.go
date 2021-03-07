@@ -8,12 +8,19 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 	"sync"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 )
+
+var emailRegex *regexp.Regexp
+
+func init() {
+	emailRegex = regexp.MustCompile(`^\S+@\S+$`)
+}
 
 // Service implements auth service
 type Service struct {
@@ -108,6 +115,16 @@ func (serv *Service) SignupHandler(w http.ResponseWriter, req *http.Request) {
 		res := responces.Error{
 			Code:    http.StatusBadRequest,
 			Message: "no password or email provided",
+		}
+		handlers.Respond(w, &res, res.Code)
+		return
+	}
+
+	matched := emailRegex.Match([]byte(reqStruct.Email))
+	if !matched {
+		res := responces.Error{
+			Code:    http.StatusBadRequest,
+			Message: "wrong email address",
 		}
 		handlers.Respond(w, &res, res.Code)
 		return
