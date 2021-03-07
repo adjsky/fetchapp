@@ -2,6 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 
+#include "TokenManager/tokenmanager.hpp"
+#include "NetworkManager/NetworkManager.hpp"
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -19,6 +22,15 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
+
+    QJSValue netManagerMeta{ engine.newQMetaObject(&NetworkManager::staticMetaObject) };
+    engine.globalObject().setProperty("NetworkManager", netManagerMeta);
+    qmlRegisterSingletonType<TokenManager>("TokenManager", 1, 0, "TokenManager", [](QQmlEngine* engine, QJSEngine* scriptEngine) {
+        Q_UNUSED(engine)
+        Q_UNUSED(scriptEngine)
+        return new TokenManager{};
+    });
+
     engine.load(url);
 
     return app.exec();
