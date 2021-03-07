@@ -13,8 +13,11 @@ public:
     Q_INVOKABLE void saveToken(const QString& token);
     Q_INVOKABLE const QString& getToken();
 
+    Q_INVOKABLE static bool remove();
+
 private:
-    QString cachedToken;
+    QString cachedToken_;
+    static QString filePath_;
 };
 
 #endif // TOKENMANAGER_H
