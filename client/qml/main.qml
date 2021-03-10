@@ -47,6 +47,11 @@ ApplicationWindow {
             loginWindow.destroy()
             appWindow.show()
         })
+        loginWindow.exitPressed.connect(function() {
+            loginWindow.destroy()
+            appWindow.visible = true
+            appWindow.close()
+        })
         loginWindow.show()
     }
 }

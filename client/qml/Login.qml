@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import TokenManager 1.0
+import "components"
 
 ApplicationWindow {
     id: loginWindow
@@ -9,6 +10,7 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 600
+    signal exitPressed
     signal tokenReceived
 
     Rectangle {
@@ -36,31 +38,12 @@ ApplicationWindow {
                 }
             }
         }
+    }
 
-        Image {
-            id: closeButton
-            width: 24
-            height: 24
-            source: "images/close1.svg"
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.rightMargin: 5
-            anchors.topMargin: 5
-            scale: closeButtonArea.containsMouse ? 1.2 : 1
-
-            MouseArea {
-                id: closeButtonArea
-                anchors.fill: parent
-                hoverEnabled: true
-
-                onClicked: {
-                    loginWindow.close()
-                }
-            }
-
-            Behavior on scale {
-                NumberAnimation { duration: 100; easing.type: Easing.InOutCubic }
-            }
+    CloseButton {
+        anchors.right: parent.right
+        onPressed: {
+            loginWindow.exitPressed()
         }
     }
 
@@ -89,3 +72,9 @@ ApplicationWindow {
         })
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:3}
+}
+##^##*/

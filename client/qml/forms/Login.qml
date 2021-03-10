@@ -182,7 +182,6 @@ Rectangle {
             Layout.fillWidth: true
 
             ColumnLayout {
-                height: 100
                 anchors.fill: parent
 
                 Button {
