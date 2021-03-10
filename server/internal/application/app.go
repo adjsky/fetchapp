@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"gotest/config"
 	"gotest/internal/services/auth"
+	"gotest/internal/services/ege"
 	"gotest/pkg/handlers"
 	"gotest/pkg/middlewares"
 	"log"
@@ -39,19 +40,20 @@ func New() *App {
 func (app *App) initializeServices() {
 	app.Router.Use(middlewares.Log)
 	app.Router.NotFoundHandler = http.HandlerFunc(handlers.NotFound)
+
+	authRouter := app.Router.PathPrefix("/auth").Subrouter()
 	authService := auth.Service{
 		SecretKey: app.Config.SecretKey,
 		Database:  app.Database,
 	}
-	authService.Register(app.Router)
+	authService.Register(authRouter)
 
-	apiRoute := app.Router.PathPrefix("/api").Subrouter()
-	apiRoute.Use(authService.AuthMiddleware)
-	apiRoute.HandleFunc("", test).Methods("GET")
-}
+	apiRouter := app.Router.PathPrefix("/api").Subrouter()
+	apiRouter.Use(authService.AuthMiddleware)
 
-func test(w http.ResponseWriter, req *http.Request) {
-
+	egeRouter := apiRouter.PathPrefix("/ege").Subrouter()
+	egeService := ege.Service{}
+	egeService.Register(egeRouter)
 }
 
 // Start server
