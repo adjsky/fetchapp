@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -8,6 +10,19 @@ import (
 type UserClaims struct {
 	Email string
 	jwt.StandardClaims
+}
+
+// GenerateClaims generates new JWT token claims
+func GenerateClaims(email string) *UserClaims {
+	return &UserClaims{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			IssuedAt:  time.Now().Unix(),
+			Issuer:    "adjsky",
+			Subject:   "auth",
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+		},
+	}
 }
 
 // GenerateTokenString returns JWT string that is passed to client
