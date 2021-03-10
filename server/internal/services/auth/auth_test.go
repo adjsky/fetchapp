@@ -33,13 +33,8 @@ func TestGetClaims(t *testing.T) {
 		}
 	})
 	t.Run("Token generated from GenerateTokenString returns valid claims", func(t *testing.T) {
-		passedClaims := UserClaims{
-			"John",
-			jwt.StandardClaims{
-				ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-			},
-		}
-		tokenString, err := GenerateTokenString(&passedClaims, cfg.SecretKey)
+		passedClaims := GenerateClaims("asdasd@mail.ru")
+		tokenString, err := GenerateTokenString(passedClaims, cfg.SecretKey)
 		if err != nil {
 			t.Fatal("GenerateTokenString returned error:", err)
 		}
@@ -53,15 +48,8 @@ func TestGetClaims(t *testing.T) {
 	})
 
 	t.Run("outdated token can't pass validation", func(t *testing.T) {
-		outdatedClaims := UserClaims{
-			Email: "test@gmail.com",
-			StandardClaims: jwt.StandardClaims{
-				IssuedAt:  time.Now().Unix(),
-				Issuer:    "adjsky",
-				ExpiresAt: time.Now().Unix() - time.Hour.Milliseconds(),
-			},
-		}
-		token, _ := GenerateTokenString(&outdatedClaims, cfg.SecretKey)
+		outdatedClaims := GenerateClaims("test@gmail.com")
+		token, _ := GenerateTokenString(outdatedClaims, cfg.SecretKey)
 		claims, err := GetClaims(token, cfg.SecretKey)
 		if claims != nil && err == nil {
 			t.Error("outdated token should be not valid, but actually is valid")

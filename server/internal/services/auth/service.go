@@ -10,9 +10,7 @@ import (
 	"net/http"
 	"regexp"
 	"sync"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 )
 
@@ -32,13 +30,12 @@ type Service struct {
 
 // Register auth service
 func (serv *Service) Register(r *mux.Router) {
-	r.HandleFunc("/login", serv.LoginHandler).Methods("POST")
-	r.HandleFunc("/signup", serv.SignupHandler).Methods("POST")
-	r.HandleFunc("/restore", serv.RestoreHandler).Methods("POST")
+	r.HandleFunc("/login", serv.loginHandler).Methods("POST")
+	r.HandleFunc("/signup", serv.signupHandler).Methods("POST")
+	r.HandleFunc("/restore", serv.restoreHandler).Methods("POST")
 }
 
-// LoginHandler handles user login process
-func (serv *Service) LoginHandler(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct loginRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -79,15 +76,8 @@ func (serv *Service) LoginHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	claims := UserClaims{
-		Email: reqStruct.Email,
-		StandardClaims: jwt.StandardClaims{
-			IssuedAt:  time.Now().Unix(),
-			Issuer:    "adjsky",
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-		},
-	}
-	token, err := GenerateTokenString(&claims, serv.SecretKey)
+	claims := GenerateClaims(reqStruct.Email)
+	token, err := GenerateTokenString(claims, serv.SecretKey)
 	if err != nil {
 		log.Println(err)
 	}
@@ -98,8 +88,7 @@ func (serv *Service) LoginHandler(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-// SignupHandler handles creating a new user
-func (serv *Service) SignupHandler(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) signupHandler(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct signupRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -140,16 +129,8 @@ func (serv *Service) SignupHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	claims := UserClaims{
-		Email: reqStruct.Email,
-		StandardClaims: jwt.StandardClaims{
-			IssuedAt:  time.Now().Unix(),
-			Issuer:    "adjsky",
-			Subject:   "auth",
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-		},
-	}
-	token, err := GenerateTokenString(&claims, serv.SecretKey)
+	claims := GenerateClaims(reqStruct.Email)
+	token, err := GenerateTokenString(claims, serv.SecretKey)
 	if err != nil {
 		log.Println(err)
 	}
@@ -160,8 +141,7 @@ func (serv *Service) SignupHandler(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-// RestoreHandler handles restoring user credentials if they were forgotten
-func (serv *Service) RestoreHandler(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) restoreHandler(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct restoreRequest
 	err := json.Unmarshal(data, &reqStruct)
