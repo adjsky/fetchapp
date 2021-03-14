@@ -1,4 +1,4 @@
-package responces
+package responses
 
 // Error is returned when an error was occured
 type Error struct {
