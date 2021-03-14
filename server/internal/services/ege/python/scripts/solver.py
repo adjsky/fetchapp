@@ -3,7 +3,7 @@ import sys
 
 _question_numbers_available = [24]
 
-#check whether given question number can be solved
+#check whether a given question number can be solved
 def check_available(number):
     return number in _question_numbers_available
 
@@ -27,7 +27,7 @@ class Types_24(_TypeEnum):
 def solve_24(file, type_):
     if type_ < 0 or type_ > len(Types_24):
         sys.stdout = sys.stderr
-        print("There are no algorithm to solve question with given type.")
+        print("There are no algorithm available to solve question with a given type.")
         print("Available types:")
         for t in Types_24:
             print(f"  {t.number} {t.description}")

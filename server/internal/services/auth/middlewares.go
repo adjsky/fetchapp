@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-// ContextKey is type that used to reference data in context assosiated with
+// ContextKey is a type that is used to reference data in a context associated with
 type ContextKey int
 
 const (
-	// ClaimsID constant used to reference claims in request context
+	// ClaimsID constant is used to reference claims in a request context
 	ClaimsID ContextKey = iota + 1
 )
 

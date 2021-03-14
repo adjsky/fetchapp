@@ -33,7 +33,7 @@ func TestAuthMiddleware(t *testing.T) {
 			t.Errorf("expected status code: %v, got: %v", http.StatusUnauthorized, writer.Code)
 		}
 	})
-	t.Run("Request with invalid token return 401 status code", func(t *testing.T) {
+	t.Run("Request with invalid token returns 401 status code", func(t *testing.T) {
 		writer := httptest.NewRecorder()
 		req.Header.Set("Authorization", "Bearer "+"asd")
 		handler.ServeHTTP(writer, req)

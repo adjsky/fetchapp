@@ -18,7 +18,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// App struct is main entry to application
+// App struct is main entry to an application
 type App struct {
 	Config   *config.Config
 	Database *sql.DB
@@ -71,7 +71,7 @@ func (app *App) initializeServices() {
 	egeService.Register(egeRouter)
 }
 
-// Start server
+// Start the server
 func (app *App) Start() {
 	app.initializeServices()
 	log.Println("Starting server on port: " + app.Config.Port)

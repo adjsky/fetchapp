@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-// Respond writes json data to caller
+// Respond writes json data to a caller
 func Respond(w http.ResponseWriter, res interface{}, statusCode int) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(res)
 }
 
-// RespondError responds with an error message to client
+// RespondError responds with an error message to a client
 func RespondError(w http.ResponseWriter, code int, message string) {
 	res := responses.Error{
 		Code:    code,

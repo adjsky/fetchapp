@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-// Config holds data required to start application
+// Config holds data required to start an application
 type Config struct {
 	SecretKey []byte
 	Realm     string
@@ -13,7 +13,7 @@ type Config struct {
 	KeyFile   string
 }
 
-// Get config instance filled with required data to start application
+// Get config instance filled with required data to start an application
 func Get() *Config {
 	certFile := os.Getenv("CERT_FILE")
 	if certFile == "" {
