@@ -26,7 +26,7 @@ type App struct {
 	TempDir  string
 }
 
-// New creates app instance
+// New creates an app instance
 func New() *App {
 	cfg := config.Get()
 	db, err := sql.Open("sqlite3", "../database.db")

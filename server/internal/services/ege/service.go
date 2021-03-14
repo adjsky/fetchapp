@@ -19,12 +19,12 @@ type Service struct {
 	TempDir string
 }
 
-// Register service in provided router
+// Register service in a provided router
 func (serv *Service) Register(r *mux.Router) {
-	r.HandleFunc("/{number:[0-9]+}", serv.handleMain)
+	r.HandleFunc("/{number:[0-9]+}", serv.handleQuestion)
 }
 
-func (serv *Service) handleMain(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 	contentType, params, err := mime.ParseMediaType(req.Header.Get("Content-Type"))
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid content-type header")
