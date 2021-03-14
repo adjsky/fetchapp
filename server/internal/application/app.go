@@ -9,7 +9,9 @@ import (
 	"gotest/pkg/middlewares"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/dchest/uniuri"
 	"github.com/gorilla/mux"
 
 	// initialize driver
@@ -21,12 +23,17 @@ type App struct {
 	Config   *config.Config
 	Database *sql.DB
 	Router   *mux.Router
+	TempDir  string
 }
 
 // New creates app instance
 func New() *App {
 	cfg := config.Get()
-	db, err := sql.Open("sqlite3", "database.db")
+	db, err := sql.Open("sqlite3", "../database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	tempDir, err := os.MkdirTemp("", uniuri.New())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +41,13 @@ func New() *App {
 		Config:   cfg,
 		Database: db,
 		Router:   mux.NewRouter(),
+		TempDir:  tempDir,
 	}
+}
+
+func (app *App) Close() {
+	app.Database.Close()
+	os.RemoveAll(app.TempDir)
 }
 
 func (app *App) initializeServices() {
@@ -52,7 +65,9 @@ func (app *App) initializeServices() {
 	apiRouter.Use(authService.AuthMiddleware)
 
 	egeRouter := apiRouter.PathPrefix("/ege").Subrouter()
-	egeService := ege.Service{}
+	egeService := ege.Service{
+		TempDir: app.TempDir,
+	}
 	egeService.Register(egeRouter)
 }
 
