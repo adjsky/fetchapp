@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"gotest/pkg/handlers"
-	"gotest/pkg/responces"
 	"net/http"
 	"strings"
 )
@@ -22,33 +21,19 @@ func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
 		authHeader := req.Header.Get("Authorization")
 		authData := strings.Split(authHeader, " ")
 		if len(authData) == 0 {
-			res := responces.Error{
-				Code:    http.StatusUnauthorized,
-				Message: "no authorization header provided",
-			}
-			handlers.Respond(w, &res, res.Code)
+			handlers.RespondError(w, http.StatusUnauthorized, "no authorization header provided")
 			return
 		}
 		if authData[0] != "Bearer" {
-			res := responces.Error{
-				Code:    http.StatusUnauthorized,
-				Message: "wrong authorization method",
-			}
-			handlers.Respond(w, &res, res.Code)
+			handlers.RespondError(w, http.StatusUnauthorized, "wrong authorization method")
 			return
 		}
 		claims, err := GetClaims(authData[1], service.SecretKey)
 		if err != nil {
-			res := responces.Error{
-				Code:    http.StatusUnauthorized,
-				Message: err.Error(),
-			}
-			handlers.Respond(w, &res, res.Code)
+			handlers.RespondError(w, http.StatusUnauthorized, "invalid auth token")
 			return
 		}
-
 		req = req.WithContext(context.WithValue(req.Context(), ClaimsID, claims))
-
 		next.ServeHTTP(w, req)
 	})
 }

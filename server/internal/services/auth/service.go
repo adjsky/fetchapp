@@ -3,13 +3,15 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"gotest/pkg/handlers"
-	"gotest/pkg/responces"
 	"io"
 	"log"
 	"net/http"
 	"regexp"
 	"sync"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gorilla/mux"
 )
@@ -40,48 +42,27 @@ func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
 	var reqStruct loginRequest
 	err := json.Unmarshal(data, &reqStruct)
 	if err != nil {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 	if reqStruct.Email == "" || reqStruct.Password == "" {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: "no password or email provided",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "no password or email provided")
 		return
 	}
-
 	var password string
 	row := serv.Database.QueryRow("SELECT password FROM Users WHERE email = ?", reqStruct.Email)
 	err = row.Scan(&password)
 	if err != nil {
-		res := responces.Error{
-			Code:    http.StatusUnauthorized,
-			Message: "no user registered with this email",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusUnauthorized, "no user registered with this email")
 		return
 	}
-	if password != reqStruct.Password {
-		res := responces.Error{
-			Code:    http.StatusUnauthorized,
-			Message: "wrong email/password pair",
-		}
-		handlers.Respond(w, &res, res.Code)
+	if bcrypt.CompareHashAndPassword([]byte(password), []byte(reqStruct.Password)) != nil {
+		handlers.RespondError(w, http.StatusUnauthorized, "wrong email/password pair")
 		return
 	}
-
 	claims := GenerateClaims(reqStruct.Email)
-	token, err := GenerateTokenString(claims, serv.SecretKey)
-	if err != nil {
-		log.Println(err)
-	}
-	res := loginResponce{
+	token, _ := GenerateTokenString(claims, serv.SecretKey)
+	res := loginResponse{
 		Code:  http.StatusOK,
 		Token: token,
 	}
@@ -93,48 +74,33 @@ func (serv *Service) signupHandler(w http.ResponseWriter, req *http.Request) {
 	var reqStruct signupRequest
 	err := json.Unmarshal(data, &reqStruct)
 	if err != nil {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 	if reqStruct.Email == "" || reqStruct.Password == "" {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: "no password or email provided",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "no password or email provided")
 		return
 	}
-
 	matched := emailRegex.Match([]byte(reqStruct.Email))
 	if !matched {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: "wrong email address",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "wrong email address")
 		return
 	}
-
-	_, err = serv.Database.Exec("INSERT INTO Users (email, password) VALUES (?, ?)", reqStruct.Email, reqStruct.Password)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.Password), bcrypt.DefaultCost)
 	if err != nil {
-		res := responces.Error{
-			Code:    http.StatusConflict,
-			Message: err.Error(),
-		}
-		handlers.Respond(w, &res, res.Code)
+		fmt.Println("hash generating error in signup: ", err)
+	}
+	_, err = serv.Database.Exec("INSERT INTO Users (email, password) VALUES (?, ?)", reqStruct.Email, hashPassword)
+	if err != nil {
+		handlers.RespondError(w, http.StatusConflict, err.Error())
 		return
 	}
-
 	claims := GenerateClaims(reqStruct.Email)
 	token, err := GenerateTokenString(claims, serv.SecretKey)
 	if err != nil {
 		log.Println(err)
 	}
-	res := signupResponce{
+	res := signupResponse{
 		Code:  http.StatusOK,
 		Token: token,
 	}
@@ -146,36 +112,27 @@ func (serv *Service) restoreHandler(w http.ResponseWriter, req *http.Request) {
 	var reqStruct restoreRequest
 	err := json.Unmarshal(data, &reqStruct)
 	if err != nil {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: "wrong request body",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 	if reqStruct.Email == "" || reqStruct.NewPassword == "" {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: "no email or new password provided",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "no email or new password provided")
 		return
 	}
 	row := serv.Database.QueryRow("SELECT ID FROM Users WHERE email = ?", reqStruct.Email)
 	var id int
 	err = row.Scan(&id)
 	if err != nil {
-		res := responces.Error{
-			Code:    http.StatusBadRequest,
-			Message: "no user created with this email",
-		}
-		handlers.Respond(w, &res, res.Code)
+		handlers.RespondError(w, http.StatusBadRequest, "no user created with this email")
 		return
 	}
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println("hash generating error in signup: ", err)
+	}
+	serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, id)
 
-	serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", reqStruct.NewPassword, id)
-
-	handlers.Respond(w, restoreResponce{
+	handlers.Respond(w, restoreResponse{
 		Code: http.StatusOK,
 	}, http.StatusOK)
 }
