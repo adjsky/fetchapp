@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"gotest/pkg/responces"
+	"gotest/pkg/responses"
 	"net/http"
 )
 
@@ -13,9 +13,18 @@ func Respond(w http.ResponseWriter, res interface{}, statusCode int) {
 	json.NewEncoder(w).Encode(res)
 }
 
+// RespondError responds with an error message to client
+func RespondError(w http.ResponseWriter, code int, message string) {
+	res := responses.Error{
+		Code:    code,
+		Message: message,
+	}
+	Respond(w, &res, res.Code)
+}
+
 // NotFound is called when a client tries to access wrong resource
 func NotFound(w http.ResponseWriter, req *http.Request) {
-	res := responces.Error{
+	res := responses.Error{
 		Code:    http.StatusNotFound,
 		Message: "no resource found",
 	}
