@@ -10,7 +10,7 @@ import (
 
 func TestGenerateTokenString(t *testing.T) {
 	cfg := config.Get()
-	t.Run("GenerateTokenString doesn't return error", func(t *testing.T) {
+	t.Run("GenerateTokenString doesn't return an error with valid arguments passed to", func(t *testing.T) {
 		claims := UserClaims{
 			"John",
 			jwt.StandardClaims{
@@ -19,14 +19,14 @@ func TestGenerateTokenString(t *testing.T) {
 		}
 		_, err := GenerateTokenString(&claims, cfg.SecretKey)
 		if err != nil {
-			t.Error("GenerateTokenString returns error:", err)
+			t.Error("GenerateTokenString returns an error:", err)
 		}
 	})
 }
 
 func TestGetClaims(t *testing.T) {
 	cfg := config.Get()
-	t.Run("Invalid token passed to GetClaims returns error and nil claims", func(t *testing.T) {
+	t.Run("Invalid token passed to GetClaims returns an error and nil claims", func(t *testing.T) {
 		claims, err := GetClaims("invalid token", cfg.SecretKey)
 		if err == nil && claims != nil {
 			t.Error("GetClaims returns non-nil claims and nil error")
@@ -36,11 +36,11 @@ func TestGetClaims(t *testing.T) {
 		passedClaims := GenerateClaims("asdasd@mail.ru")
 		tokenString, err := GenerateTokenString(passedClaims, cfg.SecretKey)
 		if err != nil {
-			t.Fatal("GenerateTokenString returns error:", err)
+			t.Fatal("GenerateTokenString returns an error:", err)
 		}
 		receivedClaims, err := GetClaims(tokenString, cfg.SecretKey)
 		if err != nil {
-			t.Fatal("GetClaims returns error:", err)
+			t.Fatal("GetClaims returns an error:", err)
 		}
 		if receivedClaims.Email != passedClaims.Email {
 			t.Fatalf("got: %s, expected: %s", receivedClaims.Email, passedClaims.Email)
