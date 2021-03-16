@@ -28,6 +28,10 @@ func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
 			handlers.RespondError(w, http.StatusUnauthorized, "wrong authorization method")
 			return
 		}
+		if len(authData) != 2 {
+			handlers.RespondError(w, http.StatusUnauthorized, "no token provided")
+			return
+		}
 		claims, err := GetClaims(authData[1], service.SecretKey)
 		if err != nil {
 			handlers.RespondError(w, http.StatusUnauthorized, "invalid auth token")
