@@ -32,7 +32,7 @@ type Service struct {
 
 // Register auth service
 func (serv *Service) Register(r *mux.Router) {
-	r.HandleFunc("/login", serv.loginHandler).Methods("POST")
+	r.HandleFunc("/login", serv.loginHandler).Methods("GET")
 	r.HandleFunc("/signup", serv.signupHandler).Methods("POST")
 	r.HandleFunc("/restore", serv.restoreHandler).Methods("POST")
 }
