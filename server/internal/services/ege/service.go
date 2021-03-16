@@ -21,7 +21,7 @@ type Service struct {
 
 // Register service in a provided router
 func (serv *Service) Register(r *mux.Router) {
-	r.HandleFunc("/{number:[0-9]+}", serv.handleQuestion)
+	r.HandleFunc("/{number:[0-9]+}", serv.handleQuestion).Methods("GET")
 }
 
 func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
@@ -57,12 +57,11 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	filename := saveToFile(serv.TempDir, text)
-	path := filepath.Join(serv.TempDir, filename)
-	questionNumber := mux.Vars(req)["number"]
-	number, _ := strconv.Atoi(questionNumber)
-	result, err := executeScript(number, questionReq.Type, path)
-	result = strings.TrimSuffix(result, "\n")
-	os.Remove(path)
+	filepath := filepath.Join(serv.TempDir, filename)
+	defer os.Remove(filepath)
+	questionNumber, _ := strconv.Atoi(mux.Vars(req)["number"]) // can ignore error since router validates that path is a number
+	result, err := processQuestion(questionNumber, filepath, &questionReq)
+	result = strings.TrimSuffix(result, "\n") // since python prints everything with endline character we need to trim it
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, result)
 		return
