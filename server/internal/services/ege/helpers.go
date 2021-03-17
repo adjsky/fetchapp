@@ -13,6 +13,8 @@ import (
 	"github.com/dchest/uniuri"
 )
 
+const pythonScriptPath string = "../internal/services/ege/python/main.py"
+
 func parseBodyPartToJson(part *multipart.Part, v interface{}) error {
 	metadataBody, err := io.ReadAll(part)
 	if err != nil {
@@ -31,11 +33,10 @@ func saveToFile(path string, data []byte) (filename string) {
 	return
 }
 
-func executeScript(questionNumber, type_ int, path string) (string, error) {
+func executeScript(args ...string) (string, error) {
 	var out strings.Builder
 	var errOut strings.Builder
-	command := exec.Command("python", "../internal/services/ege/python/main.py", "solve",
-		strconv.Itoa(questionNumber), "-f", path, "-t", strconv.Itoa(type_))
+	command := exec.Command("python", args...)
 	command.Stdout = &out
 	command.Stderr = &errOut
 	err := command.Run()
@@ -43,4 +44,9 @@ func executeScript(questionNumber, type_ int, path string) (string, error) {
 		return errOut.String(), err
 	}
 	return out.String(), nil
+}
+
+func processQuestion(questionNumber int, filepath string, req *question24Request) (string, error) {
+	return executeScript(pythonScriptPath, "solve", strconv.Itoa(questionNumber), "-f",
+		filepath, "-t", strconv.Itoa(req.Type), "-c", req.Char)
 }
