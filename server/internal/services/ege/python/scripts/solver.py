@@ -1,5 +1,6 @@
 from enum import auto, Enum
 import sys
+from scripts.util import fatal
 
 _question_numbers_available = [24]
 
@@ -21,25 +22,30 @@ class _TypeEnum(Enum):
         return self._description
 
 class Types_24(_TypeEnum):
-    REPEATING_SAME = (1, "find the longest repeating string with the same letters")
-    REPEATING_DIFF = (2, "find the longest repeating string with different letters")
+    REPEATING_SAME = (1, "find the longest repeating substring with the same letters")
+    REPEATING_DIFF = (2, "find the longest repeating substring with different letters")
+    REPEATING_SAME_LETTER = (3, "find the longest repeating substring with the same given letter")
 
-def solve_24(file, type_):
+def solve_24(file_, type_, char):
     if type_ < 0 or type_ > len(Types_24):
-        sys.stdout = sys.stderr
-        print("There are no algorithm available to solve question with a given type.")
-        print("Available types:")
+        message = "There are no algorithm available to solve question with a given type.\nAvailable types:"
         for t in Types_24:
-            print(f"  {t.number} {t.description}")
-        sys.exit(1)
+            message += f"  {t.number} {t.description}\n"
+        fatal(message[0:-1]) # trim endline character
     else:
+        if file_ == None:
+            fatal("No file was provided.")
         if type_ == 1:
-            print(_solve_24_1(file))
+            print(_solve_24_1(file_))
         elif type_ == 2:
-            print(_solve_24_2(file))
+            print(_solve_24_2(file_))
+        elif type_ == 3:
+            if char == None or char == "":
+                fatal("No character to count was provided.")
+            print(_solve_24_3(file_, char))
 
-def _solve_24_1(file):
-    data = file.read()
+def _solve_24_1(file_):
+    data = file_.read()
     if len(data) == 0:
         return 0
     curLen = 1
@@ -52,8 +58,8 @@ def _solve_24_1(file):
             curLen = 1
     return max(maxLen, curLen)
 
-def _solve_24_2(file):
-    data = file.read()
+def _solve_24_2(file_):
+    data = file_.read()
     if len(data) == 0:
         return 0
     curLen = 1
@@ -64,4 +70,16 @@ def _solve_24_2(file):
         else:
             maxLen = max(maxLen, curLen)
             curLen = 1
+    return max(maxLen, curLen)
+
+def _solve_24_3(file_, char):
+    data = file_.read()
+    curLen = 0
+    maxLen = 0
+    for c in data:
+        if c == char:
+            curLen += 1
+        else:
+            maxLen = max(maxLen, curLen)
+            curLen = 0
     return max(maxLen, curLen)

@@ -7,9 +7,10 @@ def cli():
 
 @click.command(short_help="solve exam problem")
 @click.argument("number", type=int)
-@click.option("-f", "--file", required=True, type=click.File(), help="file with data")
-@click.option("-t", "--type", "type_", required=True, type=int, help="question type")
-def solve(number, file, type_):
+@click.option("-f", "--file", "file_", type=click.File(), help="file with data")
+@click.option("-t", "--type", "type_", type=int, help="question type")
+@click.option("-c", "--char", type=str, help="char to count")
+def solve(number, file_, type_, char):
     """
         Solve exam problem
 
@@ -17,11 +18,9 @@ def solve(number, file, type_):
     """
     if scripts.check_available(number):
         func = getattr(scripts, "solve_"+str(number))
-        func(file, type_)
+        func(file_, type_, char)
     else:
-        sys.stdout = sys.stderr
-        print("No algorithm available to solve this question.")
-        sys.exit(1)
+        scripts.fatal("No algorithm available to solve this question.")
 
 cli.add_command(solve)
 
