@@ -21,8 +21,11 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
+    // initialization
     QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
+    app.setOrganizationName("adjsky");
 
+    // add c++ classes to qml
     QJSValue netManagerMeta{ engine.newQMetaObject(&NetworkManager::staticMetaObject) };
     engine.globalObject().setProperty("NetworkManager", netManagerMeta);
     qmlRegisterSingletonType<TokenManager>("TokenManager", 1, 0, "TokenManager", [](QQmlEngine* engine, QJSEngine* scriptEngine) {
@@ -30,6 +33,7 @@ int main(int argc, char *argv[])
         Q_UNUSED(scriptEngine)
         return new TokenManager{};
     });
+
 
     engine.load(url);
 
