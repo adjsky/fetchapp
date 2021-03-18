@@ -2,8 +2,8 @@ package auth
 
 import (
 	"context"
-	"gotest/pkg/handlers"
 	"net/http"
+	"server/pkg/handlers"
 	"strings"
 )
 

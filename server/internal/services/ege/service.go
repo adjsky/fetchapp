@@ -1,13 +1,13 @@
 package ege
 
 import (
-	"gotest/pkg/handlers"
 	"io"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
+	"server/pkg/handlers"
 	"strconv"
 	"strings"
 

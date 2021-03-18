@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"gotest/config"
 	"net/http"
 	"net/http/httptest"
+	"server/config"
 	"testing"
 )
 

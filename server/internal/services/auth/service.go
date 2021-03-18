@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"gotest/pkg/handlers"
 	"io"
 	"log"
 	"net/http"
 	"regexp"
+	"server/pkg/handlers"
 	"sync"
 
 	"golang.org/x/crypto/bcrypt"

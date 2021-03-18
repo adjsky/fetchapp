@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"gotest/config"
+	"server/config"
 	"testing"
 	"time"
 

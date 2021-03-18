@@ -2,14 +2,14 @@ package application
 
 import (
 	"database/sql"
-	"gotest/config"
-	"gotest/internal/services/auth"
-	"gotest/internal/services/ege"
-	"gotest/pkg/handlers"
-	"gotest/pkg/middlewares"
 	"log"
 	"net/http"
 	"os"
+	"server/config"
+	"server/internal/services/auth"
+	"server/internal/services/ege"
+	"server/pkg/handlers"
+	"server/pkg/middlewares"
 
 	"github.com/dchest/uniuri"
 	"github.com/gorilla/mux"

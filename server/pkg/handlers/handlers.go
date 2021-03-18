@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"gotest/pkg/responses"
 	"net/http"
+	"server/pkg/responses"
 )
 
 // Respond writes json data to a caller
