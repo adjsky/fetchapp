@@ -2,18 +2,25 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.11
 import "qrc:/scripts/scripts.js" as Scripts
+import "qrc:/scripts/constants.js" as Constants
 
 Rectangle {
-    id: signupForm
-    color: "#44494d"
-    radius: 10
-    border.color: "#44494d"
-    implicitHeight: 360
-    implicitWidth: 360
-
     signal registered(string token)
     signal returned
     property bool error
+    property color backgroundColor: "#44494d"
+    property color errorColor: "red"
+    property color excelFontColor: "#ffffff"
+    property color fontColor: "#989b9c"
+    property color gradientStart: "#e03614"
+    property color gradientStop: "#de0172"
+    property color fieldBackgroundColor: "#33383c"
+
+    id: signupForm
+    color: backgroundColor
+    radius: 10
+    implicitHeight: 360
+    implicitWidth: 360
 
     MouseArea {
         anchors.fill: parent
@@ -28,7 +35,7 @@ Rectangle {
         anchors.fill: parent
 
         Label {
-            color: "#ffffff"
+            color: excelFontColor
             text: "Sign up"
             font.pointSize: 16
             Layout.topMargin: 35
@@ -54,8 +61,8 @@ Rectangle {
                     TextField {
                         id: emailField
                         font.family: "Roboto"
-                        placeholderTextColor: "#989b9c"
-                        color: "#989b9c"
+                        placeholderTextColor: fontColor
+                        color: fontColor
                         leftPadding: 15
                         placeholderText: qsTr("Email address")
                         selectByMouse: true
@@ -63,10 +70,10 @@ Rectangle {
 
                         background: Rectangle {
                             id: emailFieldBackground
-                            color: "#33383c"
+                            color: fieldBackgroundColor
                             radius: 4
                             border {
-                                color: signupForm.error ? "red" : passwordField.focus ? "#44494d" : "#33383c"
+                                color: signupForm.error ? errorColor : passwordField.focus ? backgroundColor : fieldBackgroundColor
                                 width: 1
 
                                 Behavior on color {
@@ -83,27 +90,27 @@ Rectangle {
                         y: parent.y - 22
                         font.pointSize: 8
                         font.family: "Roboto"
-                        color: "red"
+                        color: errorColor
                         visible: signupForm.error
                     }
                 }
 
                 TextField {
                     id: passwordField
-                    color: "#989b9c"
+                    color: fontColor
                     Layout.rightMargin: 25
                     Layout.fillWidth: true
                     Layout.leftMargin: 25
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     echoMode: TextInput.Password
                     placeholderText: qsTr("Password")
-                    placeholderTextColor: "#989b9c"
+                    placeholderTextColor: fontColor
                     leftPadding: 15
                     background: Rectangle {
                         id: passwordFieldBackground
-                        color: "#33383c"
+                        color: fieldBackgroundColor
                         radius: 4
-                        border.color: signupForm.error ? "red" : passwordField.focus ? "#44494d" : "#33383c"
+                        border.color: signupForm.error ? errorColor : passwordField.focus ? backgroundColor : fieldBackgroundColor
                         border.width: 1
                     }
                     font.family: "Roboto"
@@ -121,7 +128,7 @@ Rectangle {
                     Layout.fillWidth: true
 
                     Label {
-                        color: "#989b9c"
+                        color: fontColor
                         text: "Already have an account"
                         anchors.left: parent.left
                         anchors.leftMargin: 5
@@ -183,7 +190,7 @@ Rectangle {
                     } else {
                         signupForm.error = false
 
-                        let netManager = new NetworkManager("http://localhost:8080/signup");
+                        let netManager = new NetworkManager(Constants.serverPath + "/auth/signup");
                         netManager.makeRequest("POST", JSON.stringify({ "email": email, "password": password }))
                         netManager.finished.connect(function(error, data) {
                             if (error === "") {
@@ -208,7 +215,7 @@ Rectangle {
                 font.family: "Roboto"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                color: "#ffffff"
+                color: excelFontColor
 
                 scale: signupButton.down ? 0.95 : 1
 
@@ -222,8 +229,8 @@ Rectangle {
 
             background: Rectangle {
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#e03614" }
-                    GradientStop { position: 1.0; color: "#de0172" }
+                    GradientStop { position: 0.0; color: gradientStart }
+                    GradientStop { position: 1.0; color: gradientStop }
                     orientation: Gradient.Horizontal
                 }
                 scale: signupButton.down ? 0.95 : 1
