@@ -2,13 +2,15 @@ import QtQuick 2.15
 
 Item {
     id: closeButton
-    implicitWidth: 30
-    implicitHeight: 30
 
     property int iconWidth: 24
     property int iconHeight: 24
     property url iconPath: "qrc:///images/close1.svg"
+
     signal pressed
+
+    implicitWidth: 30
+    implicitHeight: 30
 
     Image {
         id: closeButtonIcon

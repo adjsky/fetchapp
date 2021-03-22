@@ -1,21 +1,25 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import TokenManager 1.0
 import "components"
 
 ApplicationWindow {
     id: loginWindow
+
+    property color backgroundColor: "#33383c"
+
+    signal exitPressed
+    signal tokenReceived
+
     flags: Qt.Window | Qt.FramelessWindowHint
     visible: true
     width: 800
     height: 600
-    signal exitPressed
-    signal tokenReceived
 
     Rectangle {
         id: background
-        color: "#33383c"
+        color: backgroundColor
         anchors.fill: parent
 
         MouseArea {
@@ -56,25 +60,23 @@ ApplicationWindow {
 
     Component.onCompleted: {
         let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
-        loginForm.logined.connect(function(token) {
-                                      TokenManager.saveToken(token)
-                                      tokenReceived()
-                                  })
+        loginForm.logined.connect(function(token, remember) {
+            TokenManager.saveToken(token, remember)
+            tokenReceived()
+        })
         loginForm.registerButtonPressed.connect(function() {
             let signupForm = forms.push("forms/Signup.qml", StackView.Immediate)
             signupForm.registered.connect(function(token) {
-                                              TokenManager.saveToken(token)
-                                              tokenReceived()
-                                          })
-            signupForm.returned.connect(function() {
-                                            forms.pop(StackView.Immediate)
-                                        })
+                TokenManager.saveToken(token, true)
+                tokenReceived()
+            })
+            signupForm.returned.connect(function() { forms.pop(StackView.Immediate) })
         })
     }
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:3}
+    D{i:0;formeditorZoom:0.66}
 }
 ##^##*/
