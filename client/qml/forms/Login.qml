@@ -15,6 +15,8 @@ Rectangle {
     property color gradientStart: "#e03614"
     property color gradientStop: "#de0172"
     property color fieldBackgroundColor: "#33383c"
+    property color fieldBorderColor: internal.error ? errorColor : fieldBackgroundColor
+    property color fieldBorderFocusColor: internal.error ? errorColor : backgroundColor
 
     signal logined(string token, bool remember)
     signal registerButtonPressed
@@ -123,11 +125,8 @@ Rectangle {
                         height: 35
                         font.family: "Roboto"
                         placeholderText: qsTr("Email address")
-                        borderColor: if (internal.error) {
-                                        loginForm.errorColor
-                                     } else {
-                                        loginForm.fieldBackgroundColor
-                                     }
+                        borderColor: fieldBorderColor
+                        borderFocusColor: fieldBorderFocusColor
                     }
 
                     UserInput {
@@ -137,11 +136,8 @@ Rectangle {
                         font.family: "Roboto"
                         placeholderText: qsTr("Password")
                         echoMode: TextInput.Password
-                        borderColor: if (internal.error) {
-                                         loginForm.errorColor
-                                     } else {
-                                         loginForm.fieldBackgroundColor
-                                     }
+                        borderColor: fieldBorderColor
+                        borderFocusColor: fieldBorderFocusColor
                     }
                 }
             }
