@@ -1,13 +1,13 @@
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick 2.12
-import "qrc:/scripts/scripts.js" as Scripts
-import "qrc:/scripts/constants.js" as Constants
+import "../scripts/scripts.js" as Scripts
+import "../scripts/constants.js" as Constants
+import "../components"
 
 Rectangle {
-    signal logined(string token)
-    signal registerButtonPressed
-    property bool error
+    id: loginForm
+
     property color backgroundColor: "#44494d"
     property color errorColor: "red"
     property color excelFontColor: "#ffffff"
@@ -15,11 +15,54 @@ Rectangle {
     property color gradientStart: "#e03614"
     property color gradientStop: "#de0172"
     property color fieldBackgroundColor: "#33383c"
-    id: loginForm
+
+    signal logined(string token, bool remember)
+    signal registerButtonPressed
+
     color: backgroundColor
     radius: 10
     implicitHeight: 360
     implicitWidth: 360
+
+    // Internal
+    QtObject {
+        id: internal
+        property bool error: false
+
+        function signupRequest() {
+            let email = emailField.text
+            let password = passwordField.text
+            if (email === "" || password === "") {
+                internal.error = true
+                errorMessage.text = "Provide email and password"
+            } else {
+                email = Scripts.validateEmail(email)
+                if (email === "") {
+                    internal.error = true
+                    errorMessage.text = "Invalid email address"
+                } else {
+                    internal.error = false
+
+                    let netManager = new NetworkManager(Constants.serverPath + "/auth/login");
+                    netManager.makeRequest("GET", JSON.stringify({ "email": email, "password": password }))
+                    netManager.finished.connect(function(error, data) {
+                        if (error === "") {
+                            let response = JSON.parse(data)
+                            if (response.code !== 200) {
+                                internal.error = true
+                                errorMessage.text = response.message
+                            } else {
+                                logined(response.token, rememberBox.checked)
+                            }
+                        } else {
+                            internal.error = true
+                            errorMessage.text = error
+                        }
+                    })
+                }
+            }
+        }
+    }
 
     MouseArea {
         anchors.fill: parent
@@ -30,208 +73,144 @@ Rectangle {
         }
     }
 
-    ColumnLayout {
+    Item {
+        id: form
         anchors.fill: parent
+        anchors.bottomMargin: 40
+        anchors.rightMargin: 25
+        anchors.leftMargin: 25
+        anchors.topMargin: 40
 
         Label {
+            id: loginLabel
             color: excelFontColor
             text: qsTr("Please login")
+            anchors.horizontalCenter: parent.horizontalCenter
             font.pointSize: 16
             font.family: "Roboto"
-            Layout.topMargin: 35
-            Layout.fillWidth: false
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
         }
 
         Item {
-            Layout.topMargin: 5
-            Layout.minimumHeight: 125
-            Layout.preferredHeight: 125
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            id: inputs
+            height: 123
+            width: parent.width
+            anchors.top: parent.top
+            anchors.topMargin: 30
 
-            ColumnLayout {
-                anchors.fill: parent
+            Label {
+                id: errorMessage
+                font.pointSize: 8
+                font.family: "Roboto"
+                color: errorColor
+                visible: internal.error
+            }
 
-                Item {
-                    Layout.preferredHeight: 35
-                    Layout.rightMargin: 25
-                    Layout.leftMargin: 25
-                    Layout.fillWidth: true
+            Item {
+                id: fields
+                anchors.top: parent.top
+                anchors.topMargin: 15
+                width: parent.width
+                height: 77
 
-                    TextField {
+                Column {
+                    width: parent.width
+                    height: parent.height
+                    spacing: 7
+
+                    UserInput {
                         id: emailField
+                        width: parent.width
+                        height: 35
                         font.family: "Roboto"
-                        placeholderTextColor: fontColor
-                        color: fontColor
-                        leftPadding: 15
                         placeholderText: qsTr("Email address")
-                        selectByMouse: true
-                        anchors.fill: parent
-
-                        background: Rectangle {
-                            id: emailFieldBackground
-                            color: fieldBackgroundColor
-                            radius: 4
-                            border {
-                                color: loginForm.error ? errorColor : passwordField.focus ? backgroundColor : fieldBackgroundColor
-                                width: 1
-
-                                Behavior on color {
-                                    ColorAnimation {
-                                        duration: 50
-                                    }
-                                }
-                            }
-                        }
+                        borderColor: if (internal.error) {
+                                        loginForm.errorColor
+                                     } else {
+                                        loginForm.fieldBackgroundColor
+                                     }
                     }
 
-                    Label {
-                        id: errorMessage
-                        y: parent.y - 22
-                        font.pointSize: 8
+                    UserInput {
+                        id: passwordField
+                        width: parent.width
+                        height: 35
                         font.family: "Roboto"
-                        color: errorColor
-                        visible: loginForm.error
+                        placeholderText: qsTr("Password")
+                        echoMode: TextInput.Password
+                        borderColor: if (internal.error) {
+                                         loginForm.errorColor
+                                     } else {
+                                         loginForm.fieldBackgroundColor
+                                     }
                     }
                 }
+            }
 
-                TextField {
-                    id: passwordField
+            Item {
+                id: userControls
+                width: parent.width
+                height: 18
+                anchors.bottom: parent.bottom
+
+                CheckBox {
+                    id: rememberBox
+                    text: "Remember me"
                     font.family: "Roboto"
-                    placeholderTextColor: fontColor
-                    color: fontColor
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.minimumHeight: 35
-                    leftPadding: 15
-                    Layout.preferredHeight: 35
-                    Layout.rightMargin: 25
-                    Layout.leftMargin: 25
-                    Layout.fillWidth: true
-                    placeholderText: qsTr("Password")
-                    selectByMouse: true
-                    echoMode: TextInput.Password
+                    font.pointSize: 10
+                    spacing: 0
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
 
-                    background: Rectangle {
-                        id: passwordFieldBackground
-                        color: fieldBackgroundColor
-                        radius: 4
-                        border {
-                            color: loginForm.error ? errorColor : passwordField.focus ? backgroundColor : fieldBackgroundColor
-                            width: 1
+                    indicator: Rectangle {
+                        width: userControls.height
+                        height: userControls.height
+                        color: "transparent"
+                        border.color: fontColor
+                        border.width: 1
 
-                            Behavior on color {
-                                ColorAnimation {
+                        Rectangle {
+                            width: parent.width
+                            height: parent.height
+                            color: excelFontColor
+                            opacity: rememberBox.checked ? 1 : 0
+
+                            Behavior on opacity {
+                                NumberAnimation {
                                     duration: 50
                                 }
                             }
                         }
                     }
-                }
 
-                Item {
-                    id: userControls
-                    Layout.topMargin: 0
-                    Layout.rightMargin: 25
-                    Layout.leftMargin: 25
-                    Layout.minimumHeight: 18
-                    Layout.preferredHeight: 18
-                    Layout.fillWidth: true
-
-                    CheckBox {
-                        id: rememberBox
-                        text: "Remember me"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        font.family: "Roboto"
-                        font.pointSize: 10
-                        spacing: 0
-
-                        indicator: Rectangle {
-                            width: userControls.height
-                            height: userControls.height
-                            color: "transparent"
-                            border.color: fontColor
-                            border.width: 1
-
-                            Rectangle {
-                                width: parent.width
-                                height: parent.width
-                                color: excelFontColor
-                                opacity: rememberBox.checked ? 1 : 0
-
-                                Behavior on opacity {
-                                    NumberAnimation {
-                                        duration: 50
-                                    }
-                                }
-                            }
-                        }
-
-                        contentItem: Text {
-                            text: rememberBox.text
-                            color: fontColor
-                            font: rememberBox.font
-                            verticalAlignment: Qt.AlignVCenter
-                            leftPadding: rememberBox.indicator.width + rememberBox.spacing
-                        }
+                    contentItem: Text {
+                        text: rememberBox.text
+                        color: fontColor
+                        font: rememberBox.font
+                        verticalAlignment: Qt.AlignVCenter
+                        leftPadding: rememberBox.indicator.width + rememberBox.spacing
                     }
                 }
-
             }
         }
 
         Item {
-            height: 105
-            Layout.bottomMargin: 20
-            Layout.preferredHeight: 115
-            Layout.fillWidth: true
+            id: buttons
+            height: 100
+            width: parent.width
+            anchors.bottom: parent.bottom
 
-            ColumnLayout {
-                anchors.fill: parent
+            Column {
+                spacing: 10
+                width: parent.width
+                height: parent.height
 
                 Button {
                     id: loginButton
-                    Layout.minimumHeight: 45
-                    Layout.preferredHeight: 45
-                    Layout.leftMargin: 25
-                    Layout.rightMargin: 25
-                    Layout.fillWidth: true
+                    width: parent.width
+                    height: 45
 
-                    onPressed: {
-                        let email = emailField.text
-                        let password = passwordField.text
-                        if (email === "" || password === "") {
-                            loginForm.error = true
-                            errorMessage.text = "Provide email and password"
-                        } else {
-                            email = Scripts.validateEmail(email)
-                            if (email === "") {
-                                loginForm.error = true
-                                errorMessage.text = "Invalid email address"
-                            } else {
-                                loginForm.error = false
-
-                                let netManager = new NetworkManager(Constants.serverPath + "/auth/login");
-                                netManager.makeRequest("POST", JSON.stringify({ "email": email, "password": password }))
-                                netManager.finished.connect(function(error, data) {
-                                    if (error === "") {
-                                        let response = JSON.parse(data)
-                                        if (response.code !== 200) {
-                                            loginForm.error = true
-                                            errorMessage.text = response.message
-                                        } else {
-                                            logined(response.token)
-                                        }
-                                    } else {
-                                        loginForm.error = true
-                                        errorMessage.text = error
-                                    }
-                                })
-                            }
-                        }
-                    }
+                    onPressed: internal.signupRequest()
 
                     contentItem: Text {
                         text: "LOGIN"
@@ -270,15 +249,12 @@ Rectangle {
 
                 Button {
                     id: registerButton
-                    Layout.minimumHeight: 45
-                    Layout.preferredHeight: 45
-                    Layout.rightMargin: 25
-                    Layout.leftMargin: 25
-                    Layout.fillWidth: true
+                    width: parent.width
+                    height: 45
 
                     onClicked: {
-                        loginForm.error = false
-                        registerButtonPressed()                 
+                        internal.error = false
+                        registerButtonPressed()
                     }
 
                     contentItem: Text {
