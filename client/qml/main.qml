@@ -1,57 +1,106 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.11
+import TokenManager 1.0
+import "components"
+import "scripts/constants.js" as Constants
 
 ApplicationWindow {
-    flags: Qt.Window | Qt.FramelessWindowHint
-
     id: appWindow
+
+    property color backgroundColor: "#33383c"
+    property color sidebarColor: "#41484b"
+
     width: 1280
+    minimumWidth: 720
     height: 720
-    visible: false
+    minimumHeight: 480
+    visible: true
+    title: qsTr("fetchapp")
 
-    MouseArea {
-        id: moveWindow
-        anchors.fill: parent
-        property point lastClickPos
+    QtObject {
+        id: internal
+        property SidebarItem currentActive: homeButton
 
-        onPressed: {
-            lastClickPos = Qt.point(mouse.x, mouse.y)
-        }
-
-        DragHandler {
-            target: null
-            onActiveChanged: if (active) { appWindow.startSystemMove() }
+        function makeActive(item) {
+            if (currentActive) {
+                currentActive.active = false
+            }
+            currentActive = item
+            item.active = true
         }
     }
 
-    MouseArea {
-        id: resizeRight
-        width: 10
-        anchors {
-            top: parent.top
-            right: parent.right
-            bottom: parent.bottom
-        }
-        cursorShape: Qt.SizeHorCursor
+    Rectangle {
+        id: background
+        color: backgroundColor
+        anchors.fill: parent
 
-        DragHandler {
-            target: null
-            onActiveChanged: if (active) { loginWindow.startSystemResize(Qt.RightEdge) }
+        Rectangle {
+            id: sidebar
+            width: 50
+            height: parent.height
+            color: sidebarColor
+
+            Column {
+                spacing: 0
+
+                SidebarItem {
+                    id: homeButton
+                    width: sidebar.width
+                    height: sidebar.width
+                    iconPath: "images/home.svg"
+                    iconWidth: 24
+                    iconHeight: 24
+                    active: true
+                    onClicked: {
+                        internal.makeActive(homeButton)
+                        pageLoader.source = "pages/HomePage.qml"
+                    }
+                }
+
+                SidebarItem {
+                    id: egeButton
+                    width: sidebar.width
+                    height: sidebar.width
+                    iconPath: "images/book.svg"
+                    iconWidth: 24
+                    iconHeight: 24
+                    onClicked: {
+                        internal.makeActive(egeButton)
+                        pageLoader.source = "pages/EgePage.qml"
+                    }
+                }
+            }
+        }
+
+        Loader {
+            id: pageLoader
+            anchors.fill: parent
+            anchors.leftMargin: sidebar.width
+            source: "pages/HomePage.qml"
         }
     }
 
     Component.onCompleted: {
-        let loginComponent = Qt.createComponent("Login.qml")
-        let loginWindow = loginComponent.createObject(appWindow)
-        loginWindow.tokenReceived.connect(function() {
-            loginWindow.destroy()
-            appWindow.show()
-        })
-        loginWindow.exitPressed.connect(function() {
-            loginWindow.destroy()
-            appWindow.visible = true
-            appWindow.close()
-        })
-        loginWindow.show()
+//        let loginComponent = Qt.createComponent("Login.qml")
+//        let loginWindow = loginComponent.createObject(appWindow)
+//        loginWindow.tokenReceived.connect(function() {
+//            loginWindow.destroy()
+//            appWindow.show()
+//        })
+//        loginWindow.exitPressed.connect(function() {
+//            loginWindow.destroy()
+//            appWindow.visible = true
+//            appWindow.close()
+//        })
+//        loginWindow.show()
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.66}
+}
+##^##*/
