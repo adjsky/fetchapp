@@ -10,8 +10,8 @@ public:
     explicit TokenManager(QObject *parent = nullptr);
 
 public:
-    Q_INVOKABLE void saveToken(const QString& token);
-    Q_INVOKABLE const QString& getToken();
+    Q_INVOKABLE void saveToken(const QString& token, bool saveToFile);
+    Q_INVOKABLE QString getToken();
 
     Q_INVOKABLE static bool remove();
 

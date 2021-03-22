@@ -12,17 +12,19 @@ TokenManager::TokenManager(QObject *parent) :
 {
 }
 
-void TokenManager::saveToken(const QString &token) {
+void TokenManager::saveToken(const QString& token, bool saveToFile) {
     cachedToken_ = token;
-    QFile tokenFile{ filePath_ };
-    if (!tokenFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-        return; // todo
+    if (saveToFile) {
+        QFile tokenFile{ filePath_ };
+        if (!tokenFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+            return; // todo
+        }
+        QTextStream stream{ &tokenFile };
+        stream << token;
     }
-    QTextStream stream{ &tokenFile };
-    stream << token;
 }
 
-const QString& TokenManager::getToken() {
+QString TokenManager::getToken() {
     if (cachedToken_ == "") {
         QFile tokenFile{ filePath_ };
         if (!tokenFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
