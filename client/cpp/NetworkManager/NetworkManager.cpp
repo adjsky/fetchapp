@@ -1,27 +1,66 @@
+#include <QHttpMultiPart>
+#include <QFile>
+#include <fmt/core.h>
+
 #include "NetworkManager.hpp"
 
-NetworkManager::NetworkManager(QString url) :
+NetworkManager::NetworkManager(const QString& url, const QString& authToken) :
     QObject{ },
-    url_{ std::move(url) }
+    url_{ url },
+    authToken_{ authToken }
 {
     manager_ = new QNetworkAccessManager{ this };
 }
 
 void NetworkManager::makeRequest(const QByteArray& method, const QByteArray& data) {
-    QNetworkRequest request;
+    QNetworkRequest request{};
     request.setUrl(url_);
     request.setRawHeader("Content-Type", "application/json");
+    request.setRawHeader("Authorization", fmt::format("Bearer {}", authToken_.toStdString()).c_str());
     QNetworkReply* reply{ manager_->sendCustomRequest(request, method, data) };
 
-    connect(reply, &QNetworkReply::finished, this, [reply, this]() {
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
         reply->deleteLater();
-        if (reply->error() == QNetworkReply::ConnectionRefusedError) {
-            emit finished("Server is not available", "");
-        }
-        else {
-            emit finished("", reply->readAll());
-        }
+        responseReceived(reply);
     });
 }
 
+void NetworkManager::makeMultipartRequest(const QByteArray& method, const QList<QVariantMap>& multipartData) {
+    QNetworkRequest request{};
+    request.setUrl(url_);
+    request.setRawHeader("Authorization", fmt::format("Bearer {}", authToken_.toStdString()).c_str());
+    QHttpMultiPart* multipart = new QHttpMultiPart{ QHttpMultiPart::RelatedType };
+    for (const auto& data : multipartData) {
+        QHttpPart part{};
+        if (data["Body"].canConvert(QMetaType::QString)) {
+            part.setHeader(QNetworkRequest::ContentTypeHeader, data["Content-Type"]);
+            QString dataString{ data["Body"].toString() };
+            if (dataString.startsWith("file://")) {
+                auto* file{ new QFile{ dataString.remove("file://") } };
+                file->setParent(multipart);
+                if (file->open(QIODevice::ReadOnly)) {
+                    part.setBodyDevice(file);
+                }
+            }
+            else {
+                part.setBody(data["Body"].toByteArray());
+            }
+        }
+        multipart->append(part);
+    }
+    QNetworkReply* reply{ manager_->sendCustomRequest(request, method, multipart) };
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, multipart]() {
+        delete multipart;
+        reply->deleteLater();
+        responseReceived(reply);
+    });
+}
 
+void NetworkManager::responseReceived(QNetworkReply *reply) {
+    if (reply->error() == QNetworkReply::ConnectionRefusedError) {
+        emit finished("Server is not available", "");
+    }
+    else {
+        emit finished("", reply->readAll());
+    }
+}
