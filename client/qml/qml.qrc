@@ -2,12 +2,18 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Login.qml</file>
-        <file>scripts/scripts.js</file>
-        <file>images/close1.svg</file>
         <file>forms/Login.qml</file>
         <file>forms/Signup.qml</file>
-        <file>fonts/Roboto-Medium.ttf</file>
         <file>components/CloseButton.qml</file>
+        <file>components/SidebarItem.qml</file>
+        <file>components/UserInput.qml</file>
+        <file>pages/HomePage.qml</file>
+        <file>pages/EgePage.qml</file>
+        <file>scripts/scripts.js</file>
+        <file>images/close1.svg</file>
+        <file>images/home.svg</file>
+        <file>images/book.svg</file>
+        <file>fonts/Roboto-Medium.ttf</file>
         <file>scripts/constants.js</file>
     </qresource>
 </RCC>
