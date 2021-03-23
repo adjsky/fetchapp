@@ -38,8 +38,8 @@ Rectangle {
                 internal.error = true
                 errorMessage.text = "Provide email and password"
             } else {
-                email = Scripts.validateEmail(email)
-                if (email === "") {
+                let validDmail = Scripts.validateEmail(email)
+                if (!validEmail) {
                     internal.error = true
                     errorMessage.text = "Invalid email address"
                 } else {
