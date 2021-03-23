@@ -6,17 +6,22 @@
 
 QString TokenManager::filePath_{ "token.txt" };
 
-TokenManager::TokenManager(QObject *parent) :
+TokenManager::TokenManager(QObject* parent) :
     QObject{ parent },
     cachedToken_{ }
 {
 }
 
-void TokenManager::saveToken(const QString& token, bool saveToFile) {
+void TokenManager::saveToken(const QString& token,
+                             bool saveToFile)
+{
     cachedToken_ = token;
     if (saveToFile) {
         QFile tokenFile{ filePath_ };
-        if (!tokenFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+        if (!tokenFile.open(QIODevice::WriteOnly |
+                            QIODevice::Text |
+                            QIODevice::Truncate))
+        {
             return; // todo
         }
         QTextStream stream{ &tokenFile };
@@ -24,10 +29,12 @@ void TokenManager::saveToken(const QString& token, bool saveToFile) {
     }
 }
 
-QString TokenManager::getToken() {
+QString TokenManager::getToken()
+{
     if (cachedToken_ == "") {
         QFile tokenFile{ filePath_ };
-        if (!tokenFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        if (!tokenFile.open(QIODevice::ReadOnly |
+                            QIODevice::Text)) {
             return cachedToken_;
         }
         QTextStream stream{ &tokenFile };
@@ -36,6 +43,7 @@ QString TokenManager::getToken() {
     return cachedToken_;
 }
 
-bool TokenManager::remove() {
+bool TokenManager::remove()
+{
     return QFile::remove(filePath_);
 }

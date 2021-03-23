@@ -7,10 +7,11 @@ class TokenManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit TokenManager(QObject *parent = nullptr);
+    explicit TokenManager(QObject* parent = nullptr);
 
 public:
-    Q_INVOKABLE void saveToken(const QString& token, bool saveToFile);
+    Q_INVOKABLE void saveToken(const QString& token,
+                               bool saveToFile);
     Q_INVOKABLE QString getToken();
 
     Q_INVOKABLE static bool remove();
