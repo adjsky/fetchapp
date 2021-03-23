@@ -51,12 +51,13 @@ Rectangle {
             UserInput {
                 id: filePathInput
                 width: parent.width - button.width
-                height: 35
+                height: parent.height
                 leftPadding: 5
             }
             Button {
                 id: button
                 text: qsTr("Open")
+                height: parent.height
 
                 onPressed: {
                     fileDialog.open()
@@ -71,8 +72,7 @@ Rectangle {
         nameFilters: ["Text files (*.txt)"]
         folder: shortcuts.home
         onAccepted: {
-            console.log(fileDialog.fileUrl)
-            internal.setFilepath(fileDialog.fileUrl)
+            internal.setFilepath(fileDialog.fileUrls[0])
         }
     }
 
