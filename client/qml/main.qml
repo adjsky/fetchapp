@@ -12,10 +12,10 @@ ApplicationWindow {
     property color backgroundColor: "#33383c"
     property color sidebarColor: "#41484b"
 
-    width: 1280
-    minimumWidth: 720
+    width: 640
+    minimumWidth: 640
     height: 720
-    minimumHeight: 480
+    minimumHeight: 720
     visible: true
     title: qsTr("fetchapp")
 
