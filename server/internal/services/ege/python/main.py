@@ -1,9 +1,11 @@
 import click
 import scripts
-import sys
+
+
 @click.group()
 def cli():
     pass
+
 
 @click.command(short_help="solve exam problem")
 @click.argument("number", type=int)
@@ -22,7 +24,18 @@ def solve(number, file_, type_, char):
     else:
         scripts.fatal("No algorithm available to solve this question.")
 
+
+@click.command(short_help="print available questions")
+def available():
+    """
+        Print available questions
+    """
+    questions_list = scripts.get_available()
+    print(", ".join(map(str, questions_list)))
+
+
 cli.add_command(solve)
+cli.add_command(available)
 
 if __name__ == "__main__":
     cli()

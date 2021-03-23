@@ -2,12 +2,12 @@ package ege
 
 import (
 	"io"
-	"mime"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
 	"server/pkg/handlers"
+	"server/pkg/middlewares"
 	"strconv"
 	"strings"
 
@@ -21,23 +21,16 @@ type Service struct {
 
 // Register service in a provided router
 func (serv *Service) Register(r *mux.Router) {
-	r.HandleFunc("/{number:[0-9]+}", serv.handleQuestion).Methods("GET")
+	multipartMiddleware := middlewares.ContentTypeValidator("multipart/related")
+	r.Handle("/{number:[0-9]+}", multipartMiddleware(http.HandlerFunc(serv.handleQuestion))).Methods("GET")
+	r.HandleFunc("/available", serv.handleAvailable)
 }
 
 func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
-	contentType, params, err := mime.ParseMediaType(req.Header.Get("Content-Type"))
-	if err != nil {
-		handlers.RespondError(w, http.StatusBadRequest, "invalid content-type header")
-		return
-	}
-	if contentType != "multipart/related" {
-		handlers.RespondError(w, http.StatusBadRequest, "server accepts requests only with multipart/related content-type header")
-		return
-	}
-	mReader := multipart.NewReader(req.Body, params["boundary"])
+	mReader := multipart.NewReader(req.Body, req.Context().Value(middlewares.BoundaryID).(string))
 	metadataPart, err := mReader.NextPart()
 	if err != nil {
-		handlers.RespondError(w, http.StatusBadRequest, "no metadata part was provided")
+		handlers.RespondError(w, http.StatusBadRequest, "no metadata part provided")
 		return
 	}
 	var questionReq question24Request
@@ -48,7 +41,7 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 	}
 	textPart, err := mReader.NextPart()
 	if err != nil {
-		handlers.RespondError(w, http.StatusBadRequest, "no text part was provided")
+		handlers.RespondError(w, http.StatusBadRequest, "no text part provided")
 		return
 	}
 	text, err := io.ReadAll(textPart)
@@ -70,6 +63,20 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 	res := question24Response{
 		Code:   http.StatusOK,
 		Result: resultInt,
+	}
+	handlers.Respond(w, &res, res.Code)
+}
+
+func (serv *Service) handleAvailable(w http.ResponseWriter, req *http.Request) {
+	result, err := executeScript(pythonScriptPath, "available")
+	result = strings.TrimSuffix(result, "\n") // since python prints everything with endline character we need to trim it
+	if err != nil {
+		handlers.RespondError(w, http.StatusInternalServerError, result)
+		return
+	}
+	res := availabeResponse{
+		Code:               http.StatusOK,
+		QuestionsAvailable: result,
 	}
 	handlers.Respond(w, &res, res.Code)
 }
