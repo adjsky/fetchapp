@@ -14,7 +14,7 @@ TextField {
     implicitHeight: 35
     selectByMouse: true
     leftPadding: 15
-    placeholderText: qsTr("Hi")
+    placeholderText: qsTr("")
     placeholderTextColor: "#989b9c"
     color: "#989b9c"
 
