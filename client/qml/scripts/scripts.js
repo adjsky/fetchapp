@@ -1,3 +1,5 @@
+const fileScheme = "file://"
+
 function validateEmail(email) {
     let emails = /^\S+@\S+$/.exec(email)
     if (emails === null) {
@@ -6,18 +8,20 @@ function validateEmail(email) {
     return true
 }
 
-function validateTextFile(filepath) {
-    let filepaths = /\.(txt)$/i.exec(filepath)
-    if (filepaths === null) {
+function validateTextFile(filePath) {
+    let filePaths = /\.(txt)$/i.exec(filePath)
+    if (filePaths === null) {
         return false
     }
     return true
 }
 
-function dropScheme(filepath) {
-    let res = filepath.split("//")
-    if (res.length === 1)  {
-        return res
+function dropScheme(filePath) {
+    if (filePath.startsWith(fileScheme)) {
+        filePath = filePath.substring(fileScheme.length)
+        if (filePath[2] === ":") {
+            filePath = filePath.substring(1)
+        }
     }
-    return res[1]
+    return filePath
 }
