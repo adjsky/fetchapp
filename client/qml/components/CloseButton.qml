@@ -5,7 +5,7 @@ Item {
 
     property int iconWidth: 24
     property int iconHeight: 24
-    property url iconPath: "qrc:///images/close1.svg"
+    property url iconPath: "../images/close1.svg"
 
     signal pressed
 
