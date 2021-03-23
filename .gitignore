@@ -6,3 +6,4 @@ server/env.sh
 server/database.db
 server/internal/services/ege/python/env
 server/internal/services/ege/python/scripts/__pycache__/*
+server/.vscode
