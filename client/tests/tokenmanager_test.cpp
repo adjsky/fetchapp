@@ -9,7 +9,6 @@ TEST_CASE("TokenManager") {
         tokenManager.saveToken(tokenToBeSaved, true);
         const QString& token{ tokenManager.getToken() };
         REQUIRE(token == tokenToBeSaved);
-        TokenManager::remove();
     }
 
     SECTION("getToken when there's no saved token returns an empty string") {
