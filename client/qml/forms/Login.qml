@@ -66,15 +66,6 @@ Rectangle {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-
-        onClicked: {
-            emailField.focus = false;
-            passwordField.focus = false;
-        }
-    }
-
     Item {
         id: form
         anchors.fill: parent

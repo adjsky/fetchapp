@@ -38,7 +38,7 @@ Rectangle {
                 internal.error = true
                 errorMessage.text = "Provide email and password"
             } else {
-                let validDmail = Scripts.validateEmail(email)
+                let validEmail = Scripts.validateEmail(email)
                 if (!validEmail) {
                     internal.error = true
                     errorMessage.text = "Invalid email address"
@@ -63,15 +63,6 @@ Rectangle {
                     })
                 }
             }
-        }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-
-        onClicked: {
-            emailField.focus = false;
-            passwordField.focus = false;
         }
     }
 
