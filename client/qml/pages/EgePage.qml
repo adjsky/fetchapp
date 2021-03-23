@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import "../components"
+import "../scripts/scripts.js" as Scripts
 
 Rectangle {
     id: egePage
@@ -10,8 +11,17 @@ Rectangle {
     implicitHeight: 720
     color: backgroundColor
 
-    UserInput {
-        anchors.centerIn: parent
+    DropArea {
+        anchors.fill: parent
+
+        onDropped: {
+            if (drop.hasUrls && drop.urls.length === 1) {
+                let filePath = drop.urls[0]
+                if (Scripts.validateTextFile(filePath)) {
+                    console.log(Scripts.dropScheme(filePath))
+                }
+            }
+        }
     }
 
     //    FileDialog {
