@@ -6,12 +6,12 @@ Rectangle {
 
     property color backgroundColor: "#ffffff"
 
-    implicitWidth: 1280
+    implicitWidth: 640
     implicitHeight: 720
     color: backgroundColor
 
     Label {
-        text: qsTr("Hi there!")
+        text: qsTr("Main page")
         anchors.top: parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
