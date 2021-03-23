@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"regexp"
 	"server/pkg/handlers"
+	"server/pkg/middlewares"
 	"sync"
 
 	"golang.org/x/crypto/bcrypt"
@@ -32,9 +33,10 @@ type Service struct {
 
 // Register auth service
 func (serv *Service) Register(r *mux.Router) {
-	r.HandleFunc("/login", serv.loginHandler).Methods("GET")
-	r.HandleFunc("/signup", serv.signupHandler).Methods("POST")
-	r.HandleFunc("/restore", serv.restoreHandler).Methods("POST")
+	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
+	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.loginHandler))).Methods("GET")
+	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.signupHandler))).Methods("POST")
+	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.restoreHandler))).Methods("POST")
 }
 
 func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
