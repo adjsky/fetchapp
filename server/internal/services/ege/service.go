@@ -22,8 +22,8 @@ type Service struct {
 // Register service in a provided router
 func (serv *Service) Register(r *mux.Router) {
 	multipartMiddleware := middlewares.ContentTypeValidator("multipart/related")
-	r.Handle("/{number:[0-9]+}", multipartMiddleware(http.HandlerFunc(serv.handleQuestion))).Methods("GET")
-	r.HandleFunc("/available", serv.handleAvailable)
+	r.Handle("/{number:[0-9]+}", multipartMiddleware(http.HandlerFunc(serv.handleQuestion))).Methods("POST")
+	r.HandleFunc("/available", serv.handleAvailable).Methods("GET")
 }
 
 func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {

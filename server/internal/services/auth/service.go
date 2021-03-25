@@ -36,7 +36,7 @@ func (serv *Service) Register(r *mux.Router) {
 	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
 	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.loginHandler))).Methods("POST")
 	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.signupHandler))).Methods("POST")
-	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.restoreHandler))).Methods("PATCH")
+	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.restoreHandler))).Methods("POST")
 }
 
 func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
