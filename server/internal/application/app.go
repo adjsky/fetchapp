@@ -18,6 +18,11 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const migrationSceheme string = "CREATE TABLE IF NOT EXISTS 'Users' (" +
+	"'email'	TEXT NOT NULL UNIQUE," +
+	"'password'	TEXT NOT NULL," +
+	"'ID'		INTEGER PRIMARY KEY);"
+
 // App struct is main entry to an application
 type App struct {
 	Config   *config.Config
@@ -33,6 +38,7 @@ func New() *App {
 	if err != nil {
 		log.Fatal(err)
 	}
+	migrateTable(db)
 	tempDir, err := os.MkdirTemp("", uniuri.New())
 	if err != nil {
 		log.Fatal(err)
@@ -69,6 +75,13 @@ func (app *App) initializeServices() {
 		TempDir: app.TempDir,
 	}
 	egeService.Register(egeRouter)
+}
+
+func migrateTable(db *sql.DB) {
+	_, err := db.Exec(migrationSceheme)
+	if err != nil {
+		log.Fatal("failed to migrate sceheme")
+	}
 }
 
 // Start the server
