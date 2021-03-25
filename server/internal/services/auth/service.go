@@ -34,9 +34,9 @@ type Service struct {
 // Register auth service
 func (serv *Service) Register(r *mux.Router) {
 	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
-	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.loginHandler))).Methods("GET")
+	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.loginHandler))).Methods("POST")
 	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.signupHandler))).Methods("POST")
-	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.restoreHandler))).Methods("POST")
+	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.restoreHandler))).Methods("PATCH")
 }
 
 func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
