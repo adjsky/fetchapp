@@ -5,7 +5,7 @@ type questionResponse struct {
 	Result int `json:"result"`
 }
 
-type availabeResponse struct {
+type availableResponse struct {
 	Code               int    `json:"code"`
 	QuestionsAvailable string `json:"questions_available"`
 }

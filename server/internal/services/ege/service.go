@@ -90,7 +90,7 @@ func (serv *Service) handleQuestionTypes(w http.ResponseWriter, req *http.Reques
 		handlers.RespondError(w, http.StatusInternalServerError, result)
 		return
 	}
-	res := availabeResponse{
+	res := availableResponse{
 		Code:               http.StatusOK,
 		QuestionsAvailable: result,
 	}
