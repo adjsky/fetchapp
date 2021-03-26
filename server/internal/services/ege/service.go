@@ -22,6 +22,7 @@ type Service struct {
 // Register service in a provided router
 func (serv *Service) Register(r *mux.Router) {
 	multipartMiddleware := middlewares.ContentTypeValidator("multipart/related")
+	r.HandleFunc("/{number:[0-9]+}/types", serv.handleQuestionTypes).Methods("GET")
 	r.Handle("/{number:[0-9]+}", multipartMiddleware(http.HandlerFunc(serv.handleQuestion))).Methods("POST")
 	r.HandleFunc("/available", serv.handleAvailable).Methods("GET")
 }
@@ -60,7 +61,7 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	resultInt, _ := strconv.Atoi(result)
-	res := question24Response{
+	res := questionResponse{
 		Code:   http.StatusOK,
 		Result: resultInt,
 	}
@@ -69,6 +70,21 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 
 func (serv *Service) handleAvailable(w http.ResponseWriter, req *http.Request) {
 	result, err := executeScript(pythonScriptPath, "available")
+	result = strings.TrimSuffix(result, "\n") // since python prints everything with endline character we need to trim it
+	if err != nil {
+		handlers.RespondError(w, http.StatusInternalServerError, result)
+		return
+	}
+	res := availabeResponse{
+		Code:               http.StatusOK,
+		QuestionsAvailable: result,
+	}
+	handlers.Respond(w, &res, res.Code)
+}
+
+func (serv *Service) handleQuestionTypes(w http.ResponseWriter, req *http.Request) {
+	questionNumber := mux.Vars(req)["number"]
+	result, err := executeScript(pythonScriptPath, "types", questionNumber)
 	result = strings.TrimSuffix(result, "\n") // since python prints everything with endline character we need to trim it
 	if err != nil {
 		handlers.RespondError(w, http.StatusInternalServerError, result)
