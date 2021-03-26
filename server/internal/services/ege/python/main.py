@@ -18,11 +18,11 @@ def solve(number, file_, type_, char):
 
         NUMBER is a question number
     """
-    if scripts.check_available(number):
+    if scripts.question_implemented(number):
         func = getattr(scripts, "solve_"+str(number))
         func(file_, type_, char)
     else:
-        scripts.fatal("No algorithm available to solve this question.")
+        scripts.fatal("Can't solve this question.")
 
 
 @click.command(short_help="print available questions")
@@ -34,8 +34,20 @@ def available():
     print(", ".join(map(str, questions_list)))
 
 
+@click.command(short_help="print available question types")
+@click.argument("number", type=int)
+def types(number):
+    """
+        Print available question types
+
+        NUMBER is a question number
+    """
+    scripts.print_available_types(number)
+
+
 cli.add_command(solve)
 cli.add_command(available)
+cli.add_command(types)
 
 if __name__ == "__main__":
     cli()
