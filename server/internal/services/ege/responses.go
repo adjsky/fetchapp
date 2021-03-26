@@ -11,4 +11,6 @@ type availableResponse struct {
 }
 
 type questionTypesResponse struct {
+	Code           int    `json:"code"`
+	TypesAvailable string `json:"types_available"`
 }
