@@ -23,23 +23,27 @@ func init() {
 	emailRegex = regexp.MustCompile(`^\S+@\S+$`)
 }
 
+type restoreSession struct {
+	email string
+}
+
 // Service implements auth service
 type Service struct {
 	SecretKey       []byte
 	Database        *sql.DB
-	restoreSessions map[string]string
+	restoreSessions map[string]restoreSession
 	restoreMutex    sync.RWMutex
 }
 
 // Register auth service
 func (serv *Service) Register(r *mux.Router) {
 	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
-	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.loginHandler))).Methods("POST")
-	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.signupHandler))).Methods("POST")
-	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.restoreHandler))).Methods("POST")
+	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.handleLogin))).Methods("POST")
+	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.handleSignup))).Methods("POST")
+	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.handleRestore))).Methods("POST")
 }
 
-func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) handleLogin(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct loginRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -71,7 +75,7 @@ func (serv *Service) loginHandler(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-func (serv *Service) signupHandler(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) handleSignup(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct signupRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -109,7 +113,7 @@ func (serv *Service) signupHandler(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-func (serv *Service) restoreHandler(w http.ResponseWriter, req *http.Request) {
+func (serv *Service) handleRestore(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct restoreRequest
 	err := json.Unmarshal(data, &reqStruct)
