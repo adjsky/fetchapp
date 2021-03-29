@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 
@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:///main.qml"));
@@ -28,6 +28,9 @@ int main(int argc, char* argv[])
 
     // initialization
     QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/Roboto-Medium.ttf"));
+    QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/NotoSans-Regular.ttf"));
+    QFont font{ QStringLiteral("Noto Sans"), 10 };
+    app.setFont(font);
     app.setOrganizationName("adjsky");
 
     // add c++ classes to qml
