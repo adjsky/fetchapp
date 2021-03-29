@@ -40,7 +40,7 @@ func (serv *Service) Register(r *mux.Router) {
 	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
 	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.handleLogin))).Methods("POST")
 	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.handleSignup))).Methods("POST")
-	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.handleRestore))).Methods("POST")
+	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.handleRestore))).Methods("PUT")
 }
 
 func (serv *Service) handleLogin(w http.ResponseWriter, req *http.Request) {
@@ -98,7 +98,7 @@ func (serv *Service) handleSignup(w http.ResponseWriter, req *http.Request) {
 	}
 	_, err = serv.Database.Exec("INSERT INTO Users (email, password) VALUES (?, ?)", reqStruct.Email, hashPassword)
 	if err != nil {
-		handlers.RespondError(w, http.StatusConflict, err.Error())
+		handlers.RespondError(w, http.StatusConflict, "this email is registered")
 		return
 	}
 	claims := GenerateClaims(reqStruct.Email)
@@ -114,6 +114,35 @@ func (serv *Service) handleSignup(w http.ResponseWriter, req *http.Request) {
 }
 
 func (serv *Service) handleRestore(w http.ResponseWriter, req *http.Request) {
+	if CheckAuthorized(req) {
+		serv.handleRestoreAuth(w, req)
+	} else {
+		handlers.RespondError(w, http.StatusUnauthorized, "not authorized person can't change password")
+	}
+
+	// if reqStruct.Email == "" || reqStruct.NewPassword == "" {
+	// 	handlers.RespondError(w, http.StatusBadRequest, "no email or new password provided")
+	// 	return
+	// }
+	// row := serv.Database.QueryRow("SELECT ID FROM Users WHERE email = ?", reqStruct.Email)
+	// var id int
+	// err = row.Scan(&id)
+	// if err != nil {
+	// 	handlers.RespondError(w, http.StatusBadRequest, "no user created with this email")
+	// 	return
+	// }
+	// hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.NewPassword), bcrypt.DefaultCost)
+	// if err != nil {
+	// 	fmt.Println("hash generating error in signup: ", err)
+	// }
+	// serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, id)
+
+	// handlers.Respond(w, restoreResponse{
+	// 	Code: http.StatusOK,
+	// }, http.StatusOK)
+}
+
+func (serv *Service) handleRestoreAuth(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct restoreRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -121,24 +150,27 @@ func (serv *Service) handleRestore(w http.ResponseWriter, req *http.Request) {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if reqStruct.Email == "" || reqStruct.NewPassword == "" {
-		handlers.RespondError(w, http.StatusBadRequest, "no email or new password provided")
+	if reqStruct.OldPassword == "" || reqStruct.NewPassword == "" {
+		handlers.RespondError(w, http.StatusBadRequest, "no old or new password provided")
 		return
 	}
-	row := serv.Database.QueryRow("SELECT ID FROM Users WHERE email = ?", reqStruct.Email)
-	var id int
-	err = row.Scan(&id)
+	userClaims, err := GetClaims(GetToken(req), serv.SecretKey)
 	if err != nil {
-		handlers.RespondError(w, http.StatusBadRequest, "no user created with this email")
+		handlers.RespondError(w, http.StatusBadRequest, "invalid auth token provided")
+		return
+	}
+	var userID int
+	var userPassword string
+	row := serv.Database.QueryRow("SELECT ID, password FROM Users WHERE email = ?", userClaims.Email)
+	row.Scan(&userID, &userPassword)
+	if bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(reqStruct.OldPassword)) != nil {
+		handlers.RespondError(w, http.StatusUnauthorized, "old password doesn't correspond to account password")
 		return
 	}
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Println("hash generating error in signup: ", err)
+		fmt.Println("hash generating error in restore: ", err)
 	}
-	serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, id)
-
-	handlers.Respond(w, restoreResponse{
-		Code: http.StatusOK,
-	}, http.StatusOK)
+	serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, userID)
+	handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
 }
