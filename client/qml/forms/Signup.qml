@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.11
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import "../scripts/scripts.js" as Scripts
 import "../scripts/constants.js" as Constants
 import "../components"
@@ -47,7 +47,7 @@ Rectangle {
 
                     let netManager = new NetworkManager(Constants.serverPath + "/auth/signup");
                     netManager.makeRequest("POST", JSON.stringify({ "email": email, "password": password }))
-                    netManager.finished.connect(function(error, data) {
+                    netManager.finished.connect((error, data) => {
                         if (error === "") {
                             let response = JSON.parse(data)
                             if (response.code !== 200) {
@@ -78,9 +78,9 @@ Rectangle {
             id: loginLabel
             color: excelFontColor
             text: qsTr("Sign up")
+            font.family: "Roboto"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pointSize: 16
-            font.family: "Roboto"
         }
 
         Item {
@@ -93,7 +93,6 @@ Rectangle {
             Label {
                 id: errorMessage
                 font.pointSize: 8
-                font.family: "Roboto"
                 color: errorColor
                 visible: internal.error
             }
@@ -116,6 +115,7 @@ Rectangle {
                         height: 35
                         font.family: "Roboto"
                         placeholderText: qsTr("Email address")
+                        font.pointSize: 10
                         borderColor: fieldBorderColor
                         borderFocusColor: fieldBorderFocusColor
                     }
@@ -126,6 +126,7 @@ Rectangle {
                         height: 35
                         font.family: "Roboto"
                         placeholderText: qsTr("Password")
+                        font.pointSize: 10
                         echoMode: TextInput.Password
                         borderColor: fieldBorderColor
                         borderFocusColor: fieldBorderFocusColor
@@ -171,7 +172,6 @@ Rectangle {
         Button {
             id: signupButton
             text: qsTr("Register")
-            font.family: "Roboto"
             width: parent.width
             height: 45
             anchors.bottom: parent.bottom
@@ -181,9 +181,10 @@ Rectangle {
 
             contentItem: Text {
                 text: "REGISTER"
-                font.family: "Roboto"
+                font.pointSize: 10
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
+                font.family: "Roboto"
                 color: excelFontColor
 
                 scale: signupButton.down ? 0.95 : 1

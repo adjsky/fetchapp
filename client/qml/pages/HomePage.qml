@@ -16,7 +16,6 @@ Rectangle {
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
         font.pointSize: 15
-        font.family: "Roboto"
     }
 }
 

@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import TokenManager 1.0
-import QtQuick.Dialogs 1.2
+import Qt.labs.platform 1.1 as Platform
 import "../components"
 import "../scripts/scripts.js" as Scripts
 import "../scripts/constants.js" as Constants
@@ -18,8 +18,75 @@ Rectangle {
     QtObject {
         id: internal
 
-        function setFilepath(path) {
+        function setFilePath(path) {
             filePathInput.text = Scripts.dropScheme(path)
+        }
+
+        function setQuestionsModel() {
+            let netManager = new NetworkManager(Constants.serverPath + "/api/ege/available")
+            netManager.setAuthToken(TokenManager.getToken())
+            netManager.finished.connect((error, data) => {
+                                            if (error === "") {
+                                                let response = JSON.parse(data)
+                                                if (response.code === 200) {
+                                                    let model = response["questions_available"].split(", ")
+                                                    if (model.length !== 0) {
+                                                        questionsList.model = model
+                                                        setQuestionTypesModel(model[0])
+                                                    }
+                                                } else {
+                                                    console.log(response.message)
+                                                }
+                                            }
+                                            else {
+                                                console.log(error, data)
+                                            }
+                                        })
+            netManager.makeRequest("GET")
+        }
+
+        function setQuestionTypesModel(question_number) {
+            let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + question_number + "/types")
+            netManager.setAuthToken(TokenManager.getToken())
+            netManager.finished.connect((error, data) => {
+                                            if (error === "") {
+                                                let response = JSON.parse(data)
+                                                if (response.code === 200) {
+                                                    let model = []
+                                                    let listData = JSON.parse(data)["types_available"].split("\n")
+                                                    listData.forEach(data => {
+                                                                        let typeInfo = Scripts.splitByIndex(data, data.indexOf(" "))
+                                                                        model.push({"type": typeInfo[0], "desc": typeInfo[1]})
+                                                                     })
+                                                    questionTypesList.model = model
+                                                } else {
+                                                    console.log(response.message)
+                                                }
+                                            }
+                                            else {
+                                                console.log(error)
+                                            }
+                                        })
+            netManager.makeRequest("GET")
+        }
+
+        function getResultFromServer() {
+            let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + questionsList.currentValue)
+            netManager.setAuthToken(TokenManager.getToken())
+            netManager.makeMultipartRequest("POST", [{"Content-Type": "application/json",
+                                                      "Body": JSON.stringify({"type": 1})
+                                                     },
+                                                     {"Content-Type": "text/plain",
+                                                      "Body": Scripts.fileScheme + filePathInput.text
+                                                     }])
+            netManager.finished.connect(function(err, data) {
+                if (err === "") {
+                    popup.text = "Result is: " + JSON.parse(data)["result"]
+                    popup.open()
+                } else {
+                    console.log(err, data)
+                }
+            })
         }
     }
 
@@ -28,7 +95,7 @@ Rectangle {
 
         onDropped: {
             if (drop.hasUrls && drop.urls.length === 1) {
-                let filePath = drop.urls[0]
+                let filePath = String(drop.urls[0])
                 if (Scripts.validateTextFile(filePath)) {
                     internal.setFilepath(filePath)
                 }
@@ -37,23 +104,24 @@ Rectangle {
     }
 
     Column {
-        width: 300
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.fill: parent
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.topMargin: 20
         spacing: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 0
 
         Row {
             width: parent.width
             height: 35
+            spacing: 5
 
             UserInput {
                 id: filePathInput
-                width: parent.width - button.width
+                width: parent.width - button.width - parent.spacing
                 height: parent.height
                 leftPadding: 5
             }
+
             Button {
                 id: button
                 text: qsTr("Open")
@@ -64,28 +132,55 @@ Rectangle {
                 }
             }
         }
-    }
 
-    FileDialog {
-        id: fileDialog
-        title: "Please choose a file"
-        nameFilters: ["Text files (*.txt)"]
-        folder: shortcuts.home
-        onAccepted: {
-            internal.setFilepath(fileDialog.fileUrls[0])
+        Row {
+            width: parent.width
+            height: questionsList.height
+            spacing: 5
+
+            ComboBox {
+                id: questionsList
+                width: 80
+                enabled: currentIndex != -1
+                onActivated: {
+                    internal.setQuestionTypesModel(model[index])
+                }
+            }
+
+            ComboBox {
+                id: questionTypesList
+                width: parent.width - questionsList.width - parent.spacing
+                enabled: questionsList.currentIndex != -1
+                valueRole: "type"
+                textRole: "desc"
+            }
+        }
+
+        Button {
+            text: "Get the result"
+            enabled: filePathInput.text != ""
+            onClicked: {
+                internal.getResultFromServer()
+            }
         }
     }
 
-//        Button {
-//            text: qsTr("asdad")
-//            onClicked: {
-//                let netManager = new NetworkManager(Constants.serverPath + "/api/ege/24")
-//                netManager.setAuthToken(TokenManager.getToken())
-//                netManager.makeMultipartRequest("GET", [{"Content-Type": "application/json", "Body": JSON.stringify({"type": 1})},
-//                                                        {"Content-Type": "text/plain", "Body": "file:///home/adjsky/test.txt"}])
-//                netManager.finished.connect(function(err, data) {
-//                    console.log(err, data)
-//                })
-//            }
-//        }
+    Platform.FileDialog {
+        id: fileDialog
+        title: qsTr("Please choose a file")
+        fileMode: Platform.FileDialog.OpenFile
+        nameFilters: ["Text files (*.txt)"]
+        onAccepted: {
+            internal.setFilePath(String(fileDialog.file))
+        }
+    }
+
+    Platform.MessageDialog {
+        id: popup
+        title: qsTr("Result")
+    }
+
+    Component.onCompleted: {
+        internal.setQuestionsModel()
+    }
 }
