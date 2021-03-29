@@ -25,3 +25,7 @@ function dropScheme(filePath) {
     }
     return filePath
 }
+
+function splitByIndex(string, index) {
+    return [string.substring(0, index), string.substring(index)]
+}
