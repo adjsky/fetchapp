@@ -74,15 +74,20 @@ Rectangle {
             let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + questionsList.currentValue)
             netManager.setAuthToken(TokenManager.getToken())
             netManager.makeMultipartRequest("POST", [{"Content-Type": "application/json",
-                                                      "Body": JSON.stringify({"type": 1})
+                                                      "Body": JSON.stringify({"type": parseInt(questionTypesList.currentValue)})
                                                      },
                                                      {"Content-Type": "text/plain",
                                                       "Body": Scripts.fileScheme + filePathInput.text
                                                      }])
             netManager.finished.connect(function(err, data) {
                 if (err === "") {
-                    popup.text = "Result is: " + JSON.parse(data)["result"]
-                    popup.open()
+                    let response = JSON.parse(data)
+                    if (response["code"] === 200) {
+                        popup.text = "Result is: " + JSON.parse(data)["result"]
+                        popup.open()
+                    } else {
+                        console.log(err, data)
+                    }
                 } else {
                     console.log(err, data)
                 }
