@@ -14,7 +14,7 @@ import (
 type ContextKey int
 
 const (
-	// BoundaryID constant is used to reference a boundary provided with multipart request
+	// BoundaryID constant is used to reference a boundary provided with a multipart request
 	BoundaryID ContextKey = iota + 1
 )
 
