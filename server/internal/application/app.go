@@ -23,7 +23,7 @@ const migrationSceheme string = "CREATE TABLE IF NOT EXISTS 'Users' (" +
 	"'password'	TEXT NOT NULL," +
 	"'ID'		INTEGER PRIMARY KEY);"
 
-// App struct is main entry to an application
+// App struct is the main entry to the application
 type App struct {
 	Config   *config.Config
 	Database *sql.DB
@@ -31,7 +31,7 @@ type App struct {
 	TempDir  string
 }
 
-// New creates an app instance
+// New creates the application instance
 func New() *App {
 	cfg := config.Get()
 	db, err := sql.Open("sqlite3", "../database.db")
@@ -80,7 +80,7 @@ func (app *App) initializeServices() {
 func migrateTable(db *sql.DB) {
 	_, err := db.Exec(migrationSceheme)
 	if err != nil {
-		log.Fatal("failed to migrate sceheme")
+		log.Fatal("failed to migrate the database scheme")
 	}
 }
 

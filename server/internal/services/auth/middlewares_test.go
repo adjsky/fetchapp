@@ -18,14 +18,14 @@ func TestAuthMiddleware(t *testing.T) {
 	handler := authService.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	t.Run("Request with null authorization header returns 401 status code", func(t *testing.T) {
+	t.Run("Request with a null authorization header returns 401 status code", func(t *testing.T) {
 		writer := httptest.NewRecorder()
 		handler.ServeHTTP(writer, req)
 		if writer.Code != http.StatusUnauthorized {
 			t.Errorf("expected status code: %v, got: %v", http.StatusUnauthorized, writer.Code)
 		}
 	})
-	t.Run("Request with wrong authorization header returns 401 status code", func(t *testing.T) {
+	t.Run("Request with a wrong authorization header returns 401 status code", func(t *testing.T) {
 		writer := httptest.NewRecorder()
 		req.Header.Set("Authorization", "Basic")
 		handler.ServeHTTP(writer, req)
@@ -33,7 +33,7 @@ func TestAuthMiddleware(t *testing.T) {
 			t.Errorf("expected status code: %v, got: %v", http.StatusUnauthorized, writer.Code)
 		}
 	})
-	t.Run("Request with invalid token returns 401 status code", func(t *testing.T) {
+	t.Run("Request with an invalid token returns 401 status code", func(t *testing.T) {
 		writer := httptest.NewRecorder()
 		req.Header.Set("Authorization", "Bearer "+"asd")
 		handler.ServeHTTP(writer, req)
@@ -41,7 +41,7 @@ func TestAuthMiddleware(t *testing.T) {
 			t.Errorf("expected status code: %v, got: %v", http.StatusUnauthorized, writer.Code)
 		}
 	})
-	t.Run("Middleware should pass request with valid token", func(t *testing.T) {
+	t.Run("Middleware should pass a request with a valid token", func(t *testing.T) {
 		writer := httptest.NewRecorder()
 		claims := GenerateClaims("loh@mail.ru")
 		token, _ := GenerateTokenString(claims, authService.SecretKey)

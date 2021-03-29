@@ -15,7 +15,7 @@ const (
 	ClaimsID ContextKey = iota + 1
 )
 
-// AuthMiddleware checks whether user has JWT token included or not
+// AuthMiddleware checks whether a user has JWT token
 func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		authHeader := req.Header.Get("Authorization")
@@ -25,7 +25,7 @@ func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		if authData[0] != "Bearer" {
-			handlers.RespondError(w, http.StatusUnauthorized, "wrong authorization method")
+			handlers.RespondError(w, http.StatusUnauthorized, "wrong authorization method provided")
 			return
 		}
 		if len(authData) != 2 {
@@ -34,7 +34,7 @@ func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
 		}
 		claims, err := GetClaims(authData[1], service.SecretKey)
 		if err != nil {
-			handlers.RespondError(w, http.StatusUnauthorized, "invalid auth token")
+			handlers.RespondError(w, http.StatusUnauthorized, "invalid auth token provided")
 			return
 		}
 		req = req.WithContext(context.WithValue(req.Context(), ClaimsID, claims))

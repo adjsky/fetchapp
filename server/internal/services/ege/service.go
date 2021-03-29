@@ -53,9 +53,9 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 	filename := saveToFile(serv.TempDir, text)
 	filepath := filepath.Join(serv.TempDir, filename)
 	defer os.Remove(filepath)
-	questionNumber, _ := strconv.Atoi(mux.Vars(req)["number"]) // can ignore error since router validates that path is a number
+	questionNumber, _ := strconv.Atoi(mux.Vars(req)["number"]) // can ignore an error since router validates that path is a number
 	result, err := processQuestion(questionNumber, filepath, &questionReq)
-	result = strings.TrimSuffix(result, "\n") // since python prints everything with endline character we need to trim it
+	result = strings.TrimSuffix(result, "\n") // since python prints everything with an endline character we need to trim it
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, result)
 		return
@@ -70,7 +70,7 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 
 func (serv *Service) handleAvailable(w http.ResponseWriter, req *http.Request) {
 	result, err := executeScript(pythonScriptPath, "available")
-	result = strings.TrimSuffix(result, "\n") // since python prints everything with endline character we need to trim it
+	result = strings.TrimSuffix(result, "\n") // since python prints everything with an endline character we need to trim it
 	if err != nil {
 		handlers.RespondError(w, http.StatusInternalServerError, result)
 		return

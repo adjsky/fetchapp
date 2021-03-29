@@ -16,6 +16,6 @@ class _TypeEnum(Enum):
 
 
 class Types_24(_TypeEnum):
-    REPEATING_SAME = (1, "find the longest repeating substring with the same letters")
+    REPEATING_SAME = (1, "find the longest repeating substring with the same letter")
     REPEATING_DIFF = (2, "find the longest repeating substring with different letters")
     REPEATING_SAME_LETTER = (3, "find the longest repeating substring with the same given letter")

@@ -14,7 +14,7 @@ import (
 type ContextKey int
 
 const (
-	// ClaimsID constant is used to reference claims in a request context
+	// BoundaryID constant is used to reference a boundary provided with multipart request
 	BoundaryID ContextKey = iota + 1
 )
 
@@ -26,7 +26,7 @@ func Log(next http.Handler) http.Handler {
 	})
 }
 
-// ContentTypeValidator return middleware that check whether request's content-type header equals to required
+// ContentTypeValidator returns a middleware that checks whether a request header equals to required
 func ContentTypeValidator(required string) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

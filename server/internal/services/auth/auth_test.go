@@ -47,7 +47,7 @@ func TestGetClaims(t *testing.T) {
 		}
 	})
 
-	t.Run("outdated token can't pass validation", func(t *testing.T) {
+	t.Run("An outdated token can't pass validation", func(t *testing.T) {
 		outdatedClaims := UserClaims{
 			Email: "asdasd@mail.ru",
 			StandardClaims: jwt.StandardClaims{
@@ -57,7 +57,7 @@ func TestGetClaims(t *testing.T) {
 		token, _ := GenerateTokenString(&outdatedClaims, cfg.SecretKey)
 		claims, err := GetClaims(token, cfg.SecretKey)
 		if claims != nil && err == nil {
-			t.Error("outdated token should be not valid, but actually is valid")
+			t.Error("an outdated token should be not valid, but actually is valid")
 		}
 	})
 }
