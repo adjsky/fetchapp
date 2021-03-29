@@ -46,7 +46,7 @@ ApplicationWindow {
                     id: homeButton
                     width: sidebar.width
                     height: sidebar.width
-                    iconPath: "images/home.svg"
+                    iconPath: Qt.resolvedUrl("images/home.svg")
                     iconWidth: 24
                     iconHeight: 24
                     active: true
@@ -60,7 +60,7 @@ ApplicationWindow {
                     id: egeButton
                     width: sidebar.width
                     height: sidebar.width
-                    iconPath: "images/book.svg"
+                    iconPath: Qt.resolvedUrl("images/book.svg")
                     iconWidth: 24
                     iconHeight: 24
                     onClicked: {
