@@ -78,9 +78,6 @@ void NetworkManager::responseReceived(QNetworkReply* reply)
     else if (reply->error() == QNetworkReply::ContentOperationNotPermittedError) {
         emit finished("Method is not allowed", "");
     }
-    else if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-        emit finished("No auth token provided", reply->readAll());
-    }
     else {
         emit finished("", reply->readAll());
     }
