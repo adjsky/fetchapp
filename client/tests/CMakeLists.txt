@@ -14,8 +14,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 add_executable(fetchapp_tests
     main.cpp
     catch.hpp
-    ../cpp/TokenManager/tokenmanager.cpp
-    tokenmanager_test.cpp
+    ../cpp/UserManager/UserManager.cpp
+    usermanager_test.cpp
 )
 
 target_link_libraries(fetchapp_tests
