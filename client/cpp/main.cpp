@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 
-#include "TokenManager/tokenmanager.hpp"
+#include "UserManager/UserManager.hpp"
 #include "NetworkManager/NetworkManager.hpp"
 
 int main(int argc, char* argv[])
@@ -36,13 +36,13 @@ int main(int argc, char* argv[])
     // add c++ classes to qml
     QJSValue netManagerMeta{ engine.newQMetaObject(&NetworkManager::staticMetaObject) };
     engine.globalObject().setProperty("NetworkManager", netManagerMeta);
-    qmlRegisterSingletonType<TokenManager>("TokenManager", 1, 0, "TokenManager",
+    qmlRegisterSingletonType<UserManager>("UserManager", 1, 0, "UserManager",
                                            [](QQmlEngine* engine,
                                               QJSEngine* scriptEngine)
                                            {
                                                Q_UNUSED(engine)
                                                Q_UNUSED(scriptEngine)
-                                               return new TokenManager{ };
+                                               return new UserManager{ };
                                            });
 
     engine.load(url);

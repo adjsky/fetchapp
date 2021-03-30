@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-class TokenManager : public QObject
+class UserManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit TokenManager(QObject* parent = nullptr);
+    explicit UserManager(QObject* parent = nullptr);
 
 public:
     Q_INVOKABLE void saveToken(const QString& token,

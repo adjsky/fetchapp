@@ -31,8 +31,8 @@ find_package(fmt)
 set(PROJECT_SOURCES
         cpp/main.cpp
         qml/qml.qrc
-        cpp/TokenManager/tokenmanager.cpp
-        cpp/TokenManager/tokenmanager.hpp
+        cpp/UserManager/UserManager.cpp
+        cpp/UserManager/UserManager.hpp
         cpp/NetworkManager/NetworkManager.hpp
         cpp/NetworkManager/NetworkManager.cpp
 )

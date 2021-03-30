@@ -2,17 +2,17 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "tokenmanager.hpp"
+#include "UserManager.hpp"
 
-QString TokenManager::filePath_{ "token.txt" };
+QString UserManager::filePath_{ "token.txt" };
 
-TokenManager::TokenManager(QObject* parent) :
+UserManager::UserManager(QObject* parent) :
     QObject{ parent },
     cachedToken_{ }
 {
 }
 
-void TokenManager::saveToken(const QString& token,
+void UserManager::saveToken(const QString& token,
                              bool saveToFile)
 {
     cachedToken_ = token;
@@ -29,7 +29,7 @@ void TokenManager::saveToken(const QString& token,
     }
 }
 
-QString TokenManager::getToken()
+QString UserManager::getToken()
 {
     if (cachedToken_ == "") {
         QFile tokenFile{ filePath_ };
@@ -43,7 +43,7 @@ QString TokenManager::getToken()
     return cachedToken_;
 }
 
-bool TokenManager::remove()
+bool UserManager::remove()
 {
     return QFile::remove(filePath_);
 }
