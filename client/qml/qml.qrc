@@ -3,7 +3,7 @@
         <file>main.qml</file>
         <file>Login.qml</file>
         <file>forms/Login.qml</file>
-        <file>forms/Signup.qml</file>
+        <file>forms/SignUp.qml</file>
         <file>components/CloseButton.qml</file>
         <file>components/SidebarItem.qml</file>
         <file>components/UserInput.qml</file>

@@ -2,12 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import "../scripts/scripts.js" as Scripts
-import "../scripts/constants.js" as Constants
 import "../components"
 
 Rectangle {
-    id: signupForm
+    id: signUpForm
 
+    property string errorMessage: ""
     property color backgroundColor: "#44494d"
     property color errorColor: "red"
     property color excelFontColor: "#ffffff"
@@ -15,10 +15,10 @@ Rectangle {
     property color gradientStart: "#e03614"
     property color gradientStop: "#de0172"
     property color fieldBackgroundColor: "#33383c"
-    property color fieldBorderColor: internal.error ? errorColor : fieldBackgroundColor
-    property color fieldBorderFocusColor: internal.error ? errorColor : backgroundColor
+    property color fieldBorderColor: errorMessage !== "" ? errorColor : fieldBackgroundColor
+    property color fieldBorderFocusColor: errorMessage !== "" ? errorColor : backgroundColor
 
-    signal registered(string token)
+    signal signUpButtonPressed(string email, string password)
     signal returned
 
     color: backgroundColor
@@ -29,39 +29,18 @@ Rectangle {
     // Internal
     QtObject {
         id: internal
-        property bool error: false
 
-        function loginRequest() {
+        function signUp() {
             let email = emailField.text
             let password = passwordField.text
             if (email === "" || password === "") {
-                internal.error = true
-                errorMessage.text = "Provide email and password"
+                signUpForm.errorMessage = qsTr("Provide email and password")
             } else {
                 let validEmail = Scripts.validateEmail(email)
                 if (!validEmail) {
-                    internal.error = true
-                    errorMessage.text = "Invalid email address"
-                } else {
-                    internal.error = false
-
-                    let netManager = new NetworkManager(Constants.serverPath + "/auth/signup");
-                    netManager.makeRequest("POST", JSON.stringify({ "email": email, "password": password }))
-                    netManager.finished.connect((error, data) => {
-                        if (error === "") {
-                            let response = JSON.parse(data)
-                            if (response.code !== 200) {
-                                internal.error = true
-                                errorMessage.text = response.message
-                            } else {
-                                registered(response.token)
-                            }
-                        } else {
-                            internal.error = true
-                            errorMessage.text = error
-                        }
-                    })
+                    signUpForm.errorMessage = qsTr("Invalid email address")
                 }
+                signUpForm.signUpButtonPressed(email, password)
             }
         }
     }
@@ -91,10 +70,11 @@ Rectangle {
             anchors.topMargin: 30
 
             Label {
-                id: errorMessage
+                id: errorLabel
+                text: signUpForm.errorMessage
                 font.pointSize: 8
                 color: errorColor
-                visible: internal.error
+                visible: signUpForm.errorMessage !== ""
             }
 
             Item {
@@ -137,7 +117,7 @@ Rectangle {
             Label {
                 id: returnButton
                 color: fontColor
-                text: "Already have an account"
+                text: qsTr("Already have an account")
                 anchors.left: parent.left
                 anchors.leftMargin: 5
                 anchors.bottom: parent.bottom
@@ -170,24 +150,23 @@ Rectangle {
         }
 
         Button {
-            id: signupButton
-            text: qsTr("Register")
+            id: signUpButton
             width: parent.width
             height: 45
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 27
 
-            onPressed: internal.loginRequest()
+            onPressed: internal.signUp()
 
             contentItem: Text {
-                text: "REGISTER"
+                text: qsTr("SIGN UP")
                 font.pointSize: 10
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.family: "Roboto"
                 color: excelFontColor
 
-                scale: signupButton.down ? 0.95 : 1
+                scale: signUpButton.down ? 0.95 : 1
 
                 Behavior on scale {
                     NumberAnimation {
@@ -203,7 +182,7 @@ Rectangle {
                     GradientStop { position: 1.0; color: gradientStop }
                     orientation: Gradient.Horizontal
                 }
-                scale: signupButton.down ? 0.95 : 1
+                scale: signUpButton.down ? 0.95 : 1
                 radius: 5
 
                 Behavior on scale {
