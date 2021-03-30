@@ -24,7 +24,7 @@ Rectangle {
 
         function setQuestionsModel() {
             let netManager = new NetworkManager(Constants.serverPath + "/api/ege/available")
-            netManager.setAuthToken(TokenManager.getToken())
+            netManager.setAuthToken(UserManager.getToken())
             netManager.finished.connect((error, data) => {
                                             if (error === "") {
                                                 let response = JSON.parse(data)
@@ -47,7 +47,7 @@ Rectangle {
 
         function setQuestionTypesModel(question_number) {
             let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + question_number + "/types")
-            netManager.setAuthToken(TokenManager.getToken())
+            netManager.setAuthToken(UserManager.getToken())
             netManager.finished.connect((error, data) => {
                                             if (error === "") {
                                                 let response = JSON.parse(data)
