@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import TokenManager 1.0
+import UserManager 1.0
 import Qt.labs.platform 1.1 as Platform
 import "../components"
 import "../scripts/scripts.js" as Scripts

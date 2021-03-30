@@ -2,12 +2,12 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick 2.15
 import "../scripts/scripts.js" as Scripts
-import "../scripts/constants.js" as Constants
 import "../components"
 
 Rectangle {
     id: loginForm
 
+    property string errorMessage: ""
     property color backgroundColor: "#44494d"
     property color errorColor: "red"
     property color excelFontColor: "#ffffff"
@@ -15,11 +15,11 @@ Rectangle {
     property color gradientStart: "#e03614"
     property color gradientStop: "#de0172"
     property color fieldBackgroundColor: "#33383c"
-    property color fieldBorderColor: internal.error ? errorColor : fieldBackgroundColor
-    property color fieldBorderFocusColor: internal.error ? errorColor : backgroundColor
+    property color fieldBorderColor: errorMessage !== "" ? errorColor : fieldBackgroundColor
+    property color fieldBorderFocusColor: errorMessage !== "" ? errorColor : backgroundColor
 
-    signal logined(string token, bool remember)
-    signal registerButtonPressed
+    signal loginButtonPressed(string email, string password, bool remember)
+    signal signUpButtonPressed
 
     color: backgroundColor
     radius: 10
@@ -29,39 +29,18 @@ Rectangle {
     // Internal
     QtObject {
         id: internal
-        property bool error: false
 
-        function signupRequest() {
+        function login() {
             let email = emailField.text
             let password = passwordField.text
             if (email === "" || password === "") {
-                internal.error = true
-                errorMessage.text = "Provide email and password"
+                loginForm.errorMessage = qsTr("Provide email and password")
             } else {
                 let validEmail = Scripts.validateEmail(email)
                 if (!validEmail) {
-                    internal.error = true
-                    errorMessage.text = "Invalid email address"
-                } else {
-                    internal.error = false
-
-                    let netManager = new NetworkManager(Constants.serverPath + "/auth/login");
-                    netManager.makeRequest("GET", JSON.stringify({ "email": email, "password": password }))
-                    netManager.finished.connect((error, data) => {
-                        if (error === "") {
-                            let response = JSON.parse(data)
-                            if (response.code !== 200) {
-                                internal.error = true
-                                errorMessage.text = response.message
-                            } else {
-                                logined(response.token, rememberBox.checked)
-                            }
-                        } else {
-                            internal.error = true
-                            errorMessage.text = error
-                        }
-                    })
+                    loginForm.errorMessage = qsTr("Invalid email address")
                 }
+                loginForm.loginButtonPressed(email, password, rememberBox.checked)
             }
         }
     }
@@ -91,11 +70,12 @@ Rectangle {
             anchors.topMargin: 30
 
             Label {
-                id: errorMessage
+                id: errorLabel
+                text: loginForm.errorMessage
                 font.pointSize: 8
                 color: errorColor
                 font.family: "Roboto"
-                visible: internal.error
+                visible: loginForm.errorMessage !== ""
             }
 
             Item {
@@ -143,7 +123,7 @@ Rectangle {
 
                 CheckBox {
                     id: rememberBox
-                    text: "Remember me"
+                    text: qsTr("Remember me")
                     font.pointSize: 10
                     spacing: 0
                     anchors.left: parent.left
@@ -199,10 +179,10 @@ Rectangle {
                     width: parent.width
                     height: 45
 
-                    onPressed: internal.signupRequest()
+                    onPressed: internal.login()
 
                     contentItem: Text {
-                        text: "LOGIN"
+                        text: qsTr("LOGIN")
                         font.pointSize: 10
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
@@ -243,8 +223,8 @@ Rectangle {
                     height: 45
 
                     onClicked: {
-                        internal.error = false
-                        registerButtonPressed()
+                        loginForm.errorMessage = ""
+                        loginForm.signUpButtonPressed()
                     }
 
                     contentItem: Text {
