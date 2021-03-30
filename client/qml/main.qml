@@ -80,18 +80,18 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-//        let loginComponent = Qt.createComponent("Login.qml")
-//        let loginWindow = loginComponent.createObject(appWindow)
-//        loginWindow.tokenReceived.connect(function() {
-//            loginWindow.destroy()
-//            appWindow.show()
-//        })
-//        loginWindow.exitPressed.connect(function() {
-//            loginWindow.destroy()
-//            appWindow.visible = true
-//            appWindow.close()
-//        })
-//        loginWindow.show()
+        let loginComponent = Qt.createComponent("Login.qml")
+        let loginWindow = loginComponent.createObject(appWindow)
+        loginWindow.success.connect(() => {
+            loginWindow.destroy()
+            appWindow.show()
+        })
+        loginWindow.exit.connect(() => {
+            loginWindow.destroy()
+            appWindow.visible = true
+            appWindow.close()
+        })
+        loginWindow.show()
     }
 }
 
