@@ -2,8 +2,9 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import UserManager 1.0
-import "components"
 import "scripts/constants.js" as Constants
+import "scripts/scripts.js" as Scripts
+import "components"
 
 ApplicationWindow {
     id: loginWindow
@@ -20,6 +21,7 @@ ApplicationWindow {
 
     QtObject {
         id: internal
+        property bool rememberToken: true
 
         function loginRequest(email, password) {
             let netManager = new NetworkManager(Constants.serverPath + "/auth/login");
@@ -27,9 +29,9 @@ ApplicationWindow {
                 if (error === "") {
                     let response = JSON.parse(data)
                     if (response.code !== 200) {
-                        forms.currentItem.errorMessage = qsTr(response.message)
+                        forms.currentItem.errorMessage = qsTr(Scripts.capitalize(response.message))
                     } else {
-                        console.log(data)
+                        handleAuthResponse(response)
                     }
                 } else {
                     forms.currentItem.errorMessage = qsTr(error)
@@ -45,9 +47,9 @@ ApplicationWindow {
                 if (error === "") {
                     let response = JSON.parse(data)
                     if (response.code !== 200) {
-                        forms.currentItem.errorMessage = qsTr(response.message)
+                        forms.currentItem.errorMessage = qsTr(Scripts.capitalize(response.message))
                     } else {
-                        console.log(data)
+                        handleAuthResponse(response)
                     }
                 } else {
                     forms.currentItem.errorMessage = qsTr(error)
@@ -57,6 +59,46 @@ ApplicationWindow {
                                    JSON.stringify({ "email": email, "password": password }))
         }
 
+        function handleAuthResponse(response) {
+            forms.currentItem.errorMessage = ""
+            UserManager.saveToken(response.token, rememberToken)
+            loginWindow.success()
+        }
+
+        function validRequest(token) {
+            let netManager = new NetworkManager(Constants.serverPath + "/auth/valid")
+            netManager.finished.connect((err, data) => {
+                                            if (err === "") {
+                                                let response = JSON.parse(data)
+                                                handleValidResponse(response)
+                                            }
+                                        })
+            netManager.makeRequest("POST", JSON.stringify({"token": token}))
+        }
+
+        function handleValidResponse(response) {
+            if (response.valid) {
+                loginWindow.success()
+            } else {
+                showForm()
+            }
+        }
+
+        function showForm() {
+            busyIndicator.running = false
+            let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
+            loginForm.loginButtonPressed.connect((email, password, remember) => {
+                                                    rememberToken = remember
+                                                    internal.loginRequest(email, password)
+                                                 })
+            loginForm.signUpButtonPressed.connect(() => {
+                let signupForm = forms.push("forms/SignUp.qml", StackView.Immediate)
+                signupForm.signUpButtonPressed.connect((email, password) => {
+                    internal.signUpRequest(email, password)
+                })
+                signupForm.returned.connect(() => forms.pop(StackView.Immediate))
+            })
+        }
     }
 
     Rectangle {
@@ -100,75 +142,18 @@ ApplicationWindow {
         height: 360
     }
 
-//    BusyIndicator {
-//        id: control
-
-//        contentItem: Item {
-//            implicitWidth: 64
-//            implicitHeight: 64
-
-//            Item {
-//                id: item
-//                x: parent.width / 2 - 32
-//                y: parent.height / 2 - 32
-//                width: 64
-//                height: 64
-//                opacity: control.running ? 1 : 0
-
-//                Behavior on opacity {
-//                    OpacityAnimator {
-//                        duration: 250
-//                    }
-//                }
-
-//                RotationAnimator {
-//                    target: item
-//                    running: control.visible && control.running
-//                    from: 0
-//                    to: 360
-//                    loops: Animation.Infinite
-//                    duration: 1250
-//                }
-
-//                Repeater {
-//                    id: repeater
-//                    model: 6
-
-//                    Rectangle {
-//                        x: item.width / 2 - width / 2
-//                        y: item.height / 2 - height / 2
-//                        implicitWidth: 10
-//                        implicitHeight: 10
-//                        radius: 5
-//                        color: "#21be2b"
-//                        transform: [
-//                            Translate {
-//                                y: -Math.min(item.width, item.height) * 0.5 + 5
-//                            },
-//                            Rotation {
-//                                angle: index / repeater.count * 360
-//                                origin.x: 5
-//                                origin.y: 5
-//                            }
-//                        ]
-//                    }
-//                }
-//            }
-//        }
-//    }
+    CustomBusyIndicator {
+        id: busyIndicator
+        anchors.centerIn: parent
+    }
 
     Component.onCompleted: {
-        let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
-        loginForm.loginButtonPressed.connect((email, password, remember) => {
-                                                internal.loginRequest(email, password)
-                                             })
-        loginForm.signUpButtonPressed.connect(() => {
-            let signupForm = forms.push("forms/SignUp.qml", StackView.Immediate)
-            signupForm.signUpButtonPressed.connect((email, password) => {
-                internal.signUpRequest(email, password)
-            })
-            signupForm.returned.connect(() => forms.pop(StackView.Immediate))
-        })
+        let token = UserManager.getToken()
+        if (token === "") {
+            internal.showForm()
+        } else {
+            internal.validRequest(token)
+        }
     }
 }
 

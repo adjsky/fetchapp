@@ -2,9 +2,9 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import UserManager 1.0
 import Qt.labs.platform 1.1 as Platform
-import "../components"
 import "../scripts/scripts.js" as Scripts
 import "../scripts/constants.js" as Constants
+import "../components"
 
 Rectangle {
     id: egePage
@@ -17,6 +17,10 @@ Rectangle {
 
     QtObject {
         id: internal
+
+        function getServerData() {
+            setQuestionsModel()
+        }
 
         function setFilePath(path) {
             filePathInput.text = Scripts.dropScheme(path)
@@ -55,10 +59,13 @@ Rectangle {
                                                     let model = []
                                                     let listData = JSON.parse(data)["types_available"].split("\n")
                                                     listData.forEach(data => {
-                                                                        let typeInfo = Scripts.splitByIndex(data, data.indexOf(" "))
-                                                                        model.push({"type": typeInfo[0], "desc": typeInfo[1]})
+                                                                        let info = Scripts.splitByIndex(data, data.indexOf(" "))
+                                                                        let type = info[0]
+                                                                        let desc = qsTr(info[1])
+                                                                        model.push({"type": type, "desc": desc})
                                                                      })
                                                     questionTypesList.model = model
+                                                    showPage()
                                                 } else {
                                                     console.log(response.message)
                                                 }
@@ -70,9 +77,14 @@ Rectangle {
             netManager.makeRequest("GET")
         }
 
+        function showPage() {
+            busyIndicator.running = false
+            pageContent.opacity = 1
+        }
+
         function getResultFromServer() {
             let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + questionsList.currentValue)
-            netManager.setAuthToken(TokenManager.getToken())
+            netManager.setAuthToken(UserManager.getToken())
             netManager.makeMultipartRequest("POST", [{"Content-Type": "application/json",
                                                       "Body": JSON.stringify({"type": parseInt(questionTypesList.currentValue)})
                                                      },
@@ -95,79 +107,96 @@ Rectangle {
         }
     }
 
-    DropArea {
+    Item {
+        id: pageContent
         anchors.fill: parent
+        opacity: 0
 
-        onDropped: {
-            if (drop.hasUrls && drop.urls.length === 1) {
-                let filePath = String(drop.urls[0])
-                if (Scripts.validateTextFile(filePath)) {
-                    internal.setFilepath(filePath)
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+
+        DropArea {
+            anchors.fill: parent
+
+            onDropped: {
+                if (drop.hasUrls && drop.urls.length === 1) {
+                    let filePath = String(drop.urls[0])
+                    if (Scripts.validateTextFile(filePath)) {
+                        internal.setFilepath(filePath)
+                    }
+                }
+            }
+        }
+
+        Column {
+            anchors.fill: parent
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 20
+            spacing: 10
+
+            Row {
+                width: parent.width
+                height: 35
+                spacing: 5
+
+                UserInput {
+                    id: filePathInput
+                    width: parent.width - openButton.width - parent.spacing
+                    height: parent.height
+                    leftPadding: 5
+                }
+
+                Button {
+                    id: openButton
+                    text: qsTr("Open")
+                    height: parent.height
+
+                    onPressed: {
+                        fileDialog.open()
+                    }
+                }
+            }
+
+            Row {
+                width: parent.width
+                height: questionsList.height
+                spacing: 5
+
+                ComboBox {
+                    id: questionsList
+                    width: 80
+                    enabled: currentIndex != -1
+                    onActivated: {
+                        internal.setQuestionTypesModel(model[index])
+                    }
+                }
+
+                ComboBox {
+                    id: questionTypesList
+                    width: parent.width - questionsList.width - parent.spacing
+                    enabled: questionsList.currentIndex != -1
+                    valueRole: "type"
+                    textRole: "desc"
+                }
+            }
+
+            Button {
+                text: qsTr("Get the result")
+                enabled: filePathInput.text != ""
+                onClicked: {
+                    internal.getResultFromServer()
                 }
             }
         }
     }
 
-    Column {
-        anchors.fill: parent
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.topMargin: 20
-        spacing: 10
-
-        Row {
-            width: parent.width
-            height: 35
-            spacing: 5
-
-            UserInput {
-                id: filePathInput
-                width: parent.width - button.width - parent.spacing
-                height: parent.height
-                leftPadding: 5
-            }
-
-            Button {
-                id: button
-                text: qsTr("Open")
-                height: parent.height
-
-                onPressed: {
-                    fileDialog.open()
-                }
-            }
-        }
-
-        Row {
-            width: parent.width
-            height: questionsList.height
-            spacing: 5
-
-            ComboBox {
-                id: questionsList
-                width: 80
-                enabled: currentIndex != -1
-                onActivated: {
-                    internal.setQuestionTypesModel(model[index])
-                }
-            }
-
-            ComboBox {
-                id: questionTypesList
-                width: parent.width - questionsList.width - parent.spacing
-                enabled: questionsList.currentIndex != -1
-                valueRole: "type"
-                textRole: "desc"
-            }
-        }
-
-        Button {
-            text: "Get the result"
-            enabled: filePathInput.text != ""
-            onClicked: {
-                internal.getResultFromServer()
-            }
-        }
+    CustomBusyIndicator {
+        id: busyIndicator
+        anchors.centerIn: parent
     }
 
     Platform.FileDialog {
@@ -186,6 +215,6 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        internal.setQuestionsModel()
+        internal.getServerData()
     }
 }
