@@ -12,7 +12,7 @@ ApplicationWindow {
     minimumWidth: 640
     height: 720
     minimumHeight: 720
-    visible: true
+    visible: false
     title: qsTr("fetchapp")
 
     QtObject {
@@ -88,7 +88,7 @@ ApplicationWindow {
         })
         loginWindow.exit.connect(() => {
             loginWindow.destroy()
-            appWindow.visible = true
+            appWindow.visible = true // make it visible because there's no way to close a hidden window
             appWindow.close()
         })
         loginWindow.show()
