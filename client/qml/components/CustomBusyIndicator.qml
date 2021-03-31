@@ -18,12 +18,6 @@ BusyIndicator {
             height: 64
             opacity: control.running ? 1 : 0
 
-            Rectangle {
-                anchors.fill: parent
-                border.color: "red"
-                color: "transparent"
-            }
-
             RotationAnimation {
                 target: item
                 running: control.visible && control.running
