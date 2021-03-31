@@ -13,3 +13,8 @@ type signupResponse struct {
 type restoreResponse struct {
 	Code int `json:"code"`
 }
+
+type validResponse struct {
+	Code  int  `json:"code"`
+	Valid bool `json:"valid"`
+}

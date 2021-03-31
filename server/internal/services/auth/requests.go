@@ -16,3 +16,7 @@ type restoreRequest struct {
 	NewPassword string `json:"new_password"`
 	Token       string `json:"token"`
 }
+
+type validRequest struct {
+	Token string `json:"token"`
+}

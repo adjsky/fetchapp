@@ -41,6 +41,7 @@ func (serv *Service) Register(r *mux.Router) {
 	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.handleLogin))).Methods("POST")
 	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.handleSignup))).Methods("POST")
 	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.handleRestore))).Methods("PUT")
+	r.Handle("/valid", appJsonMiddleware(http.HandlerFunc(serv.handleValid))).Methods("POST")
 }
 
 func (serv *Service) handleLogin(w http.ResponseWriter, req *http.Request) {
@@ -89,7 +90,7 @@ func (serv *Service) handleSignup(w http.ResponseWriter, req *http.Request) {
 	}
 	matched := emailRegex.Match([]byte(reqStruct.Email))
 	if !matched {
-		handlers.RespondError(w, http.StatusBadRequest, "wrong email address")
+		handlers.RespondError(w, http.StatusBadRequest, "invalid email address")
 		return
 	}
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.Password), bcrypt.DefaultCost)
@@ -119,27 +120,6 @@ func (serv *Service) handleRestore(w http.ResponseWriter, req *http.Request) {
 	} else {
 		handlers.RespondError(w, http.StatusUnauthorized, "not authorized person can't change password")
 	}
-
-	// if reqStruct.Email == "" || reqStruct.NewPassword == "" {
-	// 	handlers.RespondError(w, http.StatusBadRequest, "no email or new password provided")
-	// 	return
-	// }
-	// row := serv.Database.QueryRow("SELECT ID FROM Users WHERE email = ?", reqStruct.Email)
-	// var id int
-	// err = row.Scan(&id)
-	// if err != nil {
-	// 	handlers.RespondError(w, http.StatusBadRequest, "no user created with this email")
-	// 	return
-	// }
-	// hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.NewPassword), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	fmt.Println("hash generating error in signup: ", err)
-	// }
-	// serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, id)
-
-	// handlers.Respond(w, restoreResponse{
-	// 	Code: http.StatusOK,
-	// }, http.StatusOK)
 }
 
 func (serv *Service) handleRestoreAuth(w http.ResponseWriter, req *http.Request) {
@@ -173,4 +153,24 @@ func (serv *Service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 	}
 	serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, userID)
 	handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
+}
+
+func (serv *Service) handleValid(w http.ResponseWriter, req *http.Request) {
+	data, _ := io.ReadAll(req.Body)
+	var reqStruct validRequest
+	err := json.Unmarshal(data, &reqStruct)
+	if err != nil {
+		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+	if reqStruct.Token == "" {
+		handlers.RespondError(w, http.StatusBadRequest, "no token provided")
+		return
+	}
+	_, err = GetClaims(reqStruct.Token, serv.SecretKey)
+	res := validResponse{
+		Code:  http.StatusOK,
+		Valid: err == nil,
+	}
+	handlers.Respond(w, &res, res.Code)
 }
