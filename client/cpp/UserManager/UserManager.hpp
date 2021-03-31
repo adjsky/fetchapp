@@ -11,7 +11,7 @@ public:
 
 public:
     Q_INVOKABLE void saveToken(const QString& token,
-                               bool saveToFile);
+                               bool saveToFile = true);
     Q_INVOKABLE QString getToken();
 
     Q_INVOKABLE static bool remove();
