@@ -145,6 +145,7 @@ ApplicationWindow {
     CustomBusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
+        indicatorColor: "#ffffff"
     }
 
     Component.onCompleted: {
@@ -157,8 +158,4 @@ ApplicationWindow {
     }
 }
 
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.66}
-}
-##^##*/
+
