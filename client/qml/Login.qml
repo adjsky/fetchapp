@@ -29,12 +29,12 @@ ApplicationWindow {
                 if (error === "") {
                     let response = JSON.parse(data)
                     if (response.code !== 200) {
-                        forms.currentItem.errorMessage = qsTr(Scripts.capitalize(response.message))
+                        forms.currentItem.errorMessage = Scripts.capitalize(response.message)
                     } else {
                         handleAuthResponse(response)
                     }
                 } else {
-                    forms.currentItem.errorMessage = qsTr(error)
+                    forms.currentItem.errorMessage = error
                 }
             })
             netManager.makeRequest("POST",
@@ -47,12 +47,12 @@ ApplicationWindow {
                 if (error === "") {
                     let response = JSON.parse(data)
                     if (response.code !== 200) {
-                        forms.currentItem.errorMessage = qsTr(Scripts.capitalize(response.message))
+                        forms.currentItem.errorMessage = Scripts.capitalize(response.message)
                     } else {
                         handleAuthResponse(response)
                     }
                 } else {
-                    forms.currentItem.errorMessage = qsTr(error)
+                    forms.currentItem.errorMessage = error
                 }
             })
             netManager.makeRequest("POST",

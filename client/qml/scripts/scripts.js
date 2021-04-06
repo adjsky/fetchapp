@@ -27,7 +27,7 @@ function dropScheme(filePath) {
 }
 
 function splitByIndex(string, index) {
-    return [string.substring(0, index), string.substring(index)]
+    return [string.substring(0, index), string.substring(index + 1)]
 }
 
 function capitalize(string) {

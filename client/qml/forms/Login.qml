@@ -34,11 +34,11 @@ Rectangle {
             let email = emailField.text
             let password = passwordField.text
             if (email === "" || password === "") {
-                loginForm.errorMessage = qsTr("Provide email and password")
+                loginForm.errorMessage = "Provide email and password"
             } else {
                 let validEmail = Scripts.validateEmail(email)
                 if (!validEmail) {
-                    loginForm.errorMessage = qsTr("Invalid email address")
+                    loginForm.errorMessage = "Invalid email address"
                 }
                 loginForm.loginButtonPressed(email, password, rememberBox.checked)
             }
@@ -71,7 +71,7 @@ Rectangle {
 
             Label {
                 id: errorLabel
-                text: loginForm.errorMessage
+                text: qsTranslate("backend", loginForm.errorMessage)
                 font.pointSize: 8
                 color: errorColor
                 font.family: "Roboto"

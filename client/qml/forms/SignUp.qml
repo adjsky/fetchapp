@@ -34,11 +34,11 @@ Rectangle {
             let email = emailField.text
             let password = passwordField.text
             if (email === "" || password === "") {
-                signUpForm.errorMessage = qsTr("Provide email and password")
+                signUpForm.errorMessage = "Provide email and password"
             } else {
                 let validEmail = Scripts.validateEmail(email)
                 if (!validEmail) {
-                    signUpForm.errorMessage = qsTr("Invalid email address")
+                    signUpForm.errorMessage = "Invalid email address"
                 }
                 signUpForm.signUpButtonPressed(email, password)
             }
@@ -71,7 +71,7 @@ Rectangle {
 
             Label {
                 id: errorLabel
-                text: signUpForm.errorMessage
+                text: qsTranslate("backend", signUpForm.errorMessage)
                 font.pointSize: 8
                 color: errorColor
                 visible: signUpForm.errorMessage !== ""
