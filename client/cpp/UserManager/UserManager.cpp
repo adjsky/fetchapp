@@ -13,15 +13,12 @@ UserManager::UserManager(QObject* parent) :
 }
 
 void UserManager::saveToken(const QString& token,
-                             bool saveToFile)
+                            bool saveToFile)
 {
     cachedToken_ = token;
     if (saveToFile) {
         QFile tokenFile{ filePath_ };
-        if (!tokenFile.open(QIODevice::WriteOnly |
-                            QIODevice::Text |
-                            QIODevice::Truncate))
-        {
+        if (!tokenFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
             return; // todo
         }
         QTextStream stream{ &tokenFile };
@@ -33,8 +30,7 @@ QString UserManager::getToken()
 {
     if (cachedToken_ == "") {
         QFile tokenFile{ filePath_ };
-        if (!tokenFile.open(QIODevice::ReadOnly |
-                            QIODevice::Text)) {
+        if (!tokenFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             return cachedToken_;
         }
         QTextStream stream{ &tokenFile };

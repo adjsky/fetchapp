@@ -12,7 +12,7 @@ public:
     Q_INVOKABLE explicit NetworkManager(const QString& url);
 
     Q_INVOKABLE void makeRequest(const QByteArray& method,
-                                 const QByteArray& data = QByteArray{});
+                                 const QByteArray& data = QByteArray{ });
     Q_INVOKABLE void makeMultipartRequest(const QByteArray& method,
                                           const QList<QVariantMap>& multipartData);
     Q_INVOKABLE void setAuthToken(const QString& token);
