@@ -17,5 +17,7 @@
         <file>fonts/Roboto-Medium.ttf</file>
         <file>fonts/NotoSans-Regular.ttf</file>
         <file>components/CustomBusyIndicator.qml</file>
+        <file>pages/SettingsPage.qml</file>
+        <file>images/settings.svg</file>
     </qresource>
 </RCC>

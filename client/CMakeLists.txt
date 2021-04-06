@@ -25,16 +25,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #endif()
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick Widgets LinguistTools REQUIRED)
 find_package(fmt)
 
+file(GLOB TRANSLATION_FILES ${CMAKE_CURRENT_SOURCE_DIR}/qml/translations/*.ts)
+
+qt5_add_translation(TRANSLATION_QM ${TRANSLATION_FILES})
+add_custom_target(translations ALL DEPENDS ${TRANSLATION_QM})
+
 set(PROJECT_SOURCES
-        cpp/main.cpp
         qml/qml.qrc
+        cpp/main.cpp
         cpp/UserManager/UserManager.cpp
         cpp/UserManager/UserManager.hpp
         cpp/NetworkManager/NetworkManager.hpp
         cpp/NetworkManager/NetworkManager.cpp
+        cpp/Language/Language.cpp
+        cpp/Language/Language.hpp
+        cpp/Config/Config.cpp
+        cpp/Config/Config.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

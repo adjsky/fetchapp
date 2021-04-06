@@ -1,5 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import Config 1.0
+import Language 1.0
 import "components"
 
 ApplicationWindow {
@@ -13,7 +15,7 @@ ApplicationWindow {
     height: 720
     minimumHeight: 720
     visible: false
-    title: qsTr("fetchapp")
+    title: Qt.application.name
 
     QtObject {
         id: internal
@@ -26,6 +28,10 @@ ApplicationWindow {
             currentActive = item
             item.active = true
         }
+
+        function initialize() {
+            Language.set(Config.settings.language)
+        }
     }
 
     Rectangle {
@@ -34,7 +40,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         Rectangle {
-            id: sidebar
+            id: sideBar
             width: 50
             height: parent.height
             color: sidebarColor
@@ -44,8 +50,8 @@ ApplicationWindow {
 
                 SidebarItem {
                     id: homeButton
-                    width: sidebar.width
-                    height: sidebar.width
+                    width: sideBar.width
+                    height: sideBar.width
                     iconPath: Qt.resolvedUrl("images/home.svg")
                     iconWidth: 24
                     iconHeight: 24
@@ -58,8 +64,8 @@ ApplicationWindow {
 
                 SidebarItem {
                     id: egeButton
-                    width: sidebar.width
-                    height: sidebar.width
+                    width: sideBar.width
+                    height: sideBar.width
                     iconPath: Qt.resolvedUrl("images/book.svg")
                     iconWidth: 24
                     iconHeight: 24
@@ -69,17 +75,33 @@ ApplicationWindow {
                     }
                 }
             }
+
+            SidebarItem {
+                id: settingsButton
+                width: sideBar.width
+                height: sideBar.width
+                anchors.bottom: parent.bottom
+                iconPath: Qt.resolvedUrl("images/settings.svg")
+                iconWidth: 24
+                iconHeight: 24
+                onClicked: {
+                    internal.makeActive(settingsButton)
+                    pageLoader.source = "pages/SettingsPage.qml"
+                }
+            }
         }
 
         Loader {
             id: pageLoader
             anchors.fill: parent
-            anchors.leftMargin: sidebar.width
+            anchors.leftMargin: sideBar.width
             source: "pages/HomePage.qml"
         }
     }
 
     Component.onCompleted: {
+        internal.initialize()
+
         let loginComponent = Qt.createComponent("Login.qml")
         let loginWindow = loginComponent.createObject(appWindow)
         loginWindow.success.connect(() => {
