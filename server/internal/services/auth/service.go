@@ -156,6 +156,10 @@ func (serv *Service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 }
 
 func (serv *Service) handleValid(w http.ResponseWriter, req *http.Request) {
+		go func() {
+			_ = helpers.SendEmail(&serv.config.Smtp,
+				[]string{reqData.Email},
+				[]byte("Subject: Restore account\n"+token))
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct validRequest
 	err := json.Unmarshal(data, &reqStruct)
