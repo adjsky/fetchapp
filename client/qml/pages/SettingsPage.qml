@@ -61,11 +61,13 @@ Rectangle {
                     }
                 }
             }
+        }
 
-            Button {
-                text: qsTr("Sign out")
-                onClicked: signOut()
-            }
+        Button {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            text: qsTr("Sign out")
+            onClicked: signOut()
         }
     }
 }
