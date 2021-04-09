@@ -10,7 +10,7 @@ import (
 func Respond(w http.ResponseWriter, res interface{}, statusCode int) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(res)
+	_ = json.NewEncoder(w).Encode(res)
 }
 
 // RespondError responds with an error message to a client
