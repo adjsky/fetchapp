@@ -34,20 +34,19 @@ ApplicationWindow {
 
         function initialize() {
             Language.set(Config.settings.language)
+        }
+
+        function showLoginWindow() {
             let loginComponent = Qt.createComponent("Login.qml")
             loginWindow = loginComponent.createObject(appWindow)
             loginWindow.success.connect(() => {
-                loginWindow.opacity = 0
+                loginWindow.destroy()
                 appWindow.opacity = 1
             })
             loginWindow.exit.connect(() => {
                 appWindow.close()
             })
-            loginWindow.opacity = 0
-        }
-
-        function showLoginWindow() {
-            internal.loginWindow.opacity = 1
+            loginWindow.show()
         }
     }
 
