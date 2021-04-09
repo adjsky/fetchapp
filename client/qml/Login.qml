@@ -135,7 +135,7 @@ ApplicationWindow {
         }
     }
 
-    StackView {
+    Loader {
         id: forms
         anchors.centerIn: parent
         width: 360
