@@ -8,6 +8,8 @@ Rectangle {
 
     property color backgroundColor: "#ffffff"
 
+    signal signOut
+
     implicitWidth: 640
     implicitHeight: 720
     color: backgroundColor
@@ -57,6 +59,11 @@ Rectangle {
                         currentIndex = indexOfValue(Config.settings.language)
                     }
                 }
+            }
+
+            Button {
+                text: qsTr("Sign out")
+                onClicked: signOut()
             }
         }
     }

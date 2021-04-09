@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import UserManager 1.0
 import Config 1.0
 import Language 1.0
 import "components"
@@ -103,6 +104,13 @@ ApplicationWindow {
                 onClicked: {
                     internal.makeActive(settingsButton)
                     pageLoader.source = "pages/SettingsPage.qml"
+                    pageLoader.item.signOut.connect(() => {
+                        UserManager.removeToken()
+                        appWindow.opacity = 0
+                        pageLoader.source = "pages/HomePage.qml"
+                        internal.makeActive(homeButton)
+                        internal.showLoginWindow()
+                    })
                 }
             }
         }
