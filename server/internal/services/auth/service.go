@@ -27,16 +27,13 @@ type restoreSession struct {
 	email string
 }
 
-// Service implements auth service
-type Service struct {
-	SecretKey       []byte
-	Database        *sql.DB
+type service struct {
 	restoreSessions map[string]restoreSession
 	restoreMutex    sync.RWMutex
 }
 
 // Register auth service
-func (serv *Service) Register(r *mux.Router) {
+func (serv *service) Register(r *mux.Router) {
 	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
 	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.handleLogin))).Methods("POST")
 	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.handleSignup))).Methods("POST")
@@ -44,7 +41,8 @@ func (serv *Service) Register(r *mux.Router) {
 	r.Handle("/valid", appJsonMiddleware(http.HandlerFunc(serv.handleValid))).Methods("POST")
 }
 
-func (serv *Service) handleLogin(w http.ResponseWriter, req *http.Request) {
+
+func (serv *service) handleLogin(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct loginRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -76,7 +74,7 @@ func (serv *Service) handleLogin(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-func (serv *Service) handleSignup(w http.ResponseWriter, req *http.Request) {
+func (serv *service) handleSignup(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct signupRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -114,7 +112,7 @@ func (serv *Service) handleSignup(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-func (serv *Service) handleRestore(w http.ResponseWriter, req *http.Request) {
+func (serv *service) handleRestore(w http.ResponseWriter, req *http.Request) {
 	if CheckAuthorized(req) {
 		serv.handleRestoreAuth(w, req)
 	} else {
@@ -122,7 +120,7 @@ func (serv *Service) handleRestore(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (serv *Service) handleRestoreAuth(w http.ResponseWriter, req *http.Request) {
+func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct restoreRequest
 	err := json.Unmarshal(data, &reqStruct)
@@ -155,11 +153,12 @@ func (serv *Service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 	handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
 }
 
-func (serv *Service) handleValid(w http.ResponseWriter, req *http.Request) {
 		go func() {
 			_ = helpers.SendEmail(&serv.config.Smtp,
 				[]string{reqData.Email},
 				[]byte("Subject: Restore account\n"+token))
+
+func (serv *service) handleValid(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
 	var reqStruct validRequest
 	err := json.Unmarshal(data, &reqStruct)
