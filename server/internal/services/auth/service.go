@@ -10,22 +10,28 @@ import (
 	"regexp"
 	"server/config"
 	"server/pkg/handlers"
+	"server/pkg/helpers"
 	"server/pkg/middlewares"
 	"sync"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/dchest/uniuri"
 	"github.com/gorilla/mux"
 )
 
 var emailRegex *regexp.Regexp
+
+const restoreSessionDuration = time.Hour
 
 func init() {
 	emailRegex = regexp.MustCompile(`^\S+@\S+$`)
 }
 
 type restoreSession struct {
-	email string
+	email     string
+	createdAt time.Time
 }
 
 type service struct {
@@ -129,7 +135,7 @@ func (serv *service) handleRestore(w http.ResponseWriter, req *http.Request) {
 	if CheckAuthorized(req) {
 		serv.handleRestoreAuth(w, req)
 	} else {
-		handlers.RespondError(w, http.StatusUnauthorized, "not authorized person can't change password")
+		serv.handleRestoreNonAuth(w, req)
 	}
 }
 
@@ -166,10 +172,68 @@ func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 	handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
 }
 
+func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Request) {
+	data, _ := io.ReadAll(req.Body)
+	var reqData restoreRequest
+	err := json.Unmarshal(data, &reqData)
+	if err != nil {
+		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+	if reqData.Token == "" {
+		if reqData.Email == "" {
+			handlers.RespondError(w, http.StatusBadRequest, "no email provided")
+			return
+		}
+		row := serv.database.QueryRow("SELECT ID FROM Users WHERE email = ?", reqData.Email)
+		err := row.Scan()
+		if err == sql.ErrNoRows {
+			handlers.RespondError(w, http.StatusBadRequest, "no user with provided email registered")
+			return
+		}
+		token := uniuri.NewLen(8)
+		serv.restoreMutex.Lock()
+		defer serv.restoreMutex.Unlock()
+		serv.restoreSessions[token] = restoreSession{
+			email:     reqData.Email,
+			createdAt: time.Now(),
+		}
+		res := restoreResponse{
+			Code: http.StatusAccepted,
+		}
+		handlers.Respond(w, &res, res.Code)
 		go func() {
 			_ = helpers.SendEmail(&serv.config.Smtp,
 				[]string{reqData.Email},
 				[]byte("Subject: Restore account\n"+token))
+		}()
+	} else {
+		if reqData.NewPassword == "" || reqData.OldPassword == "" {
+			handlers.RespondError(w, http.StatusBadRequest, "no new or old password provided")
+			return
+		}
+		restoreSession, ok := serv.restoreSessions[reqData.Token]
+		if !ok {
+			handlers.RespondError(w, http.StatusBadRequest, "invalid token provided")
+			return
+		}
+		var userID int
+		var userPassword string
+		row := serv.database.QueryRow("SELECT ID, password FROM Users WHERE email = ?", restoreSession.email)
+		_ = row.Scan(&userID, &userPassword)
+		if bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(reqData.OldPassword)) != nil {
+			handlers.RespondError(w, http.StatusUnauthorized, "old password doesn't correspond to account password")
+			return
+		}
+		hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqData.NewPassword), bcrypt.DefaultCost)
+		if err != nil {
+			fmt.Println("hash generating error in restore: ", err)
+		}
+		_, _ = serv.database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, userID)
+		delete(serv.restoreSessions, reqData.Token)
+		handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
+	}
+}
 
 func (serv *service) handleValid(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
