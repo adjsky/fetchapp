@@ -29,12 +29,12 @@ ApplicationWindow {
                 if (error === "") {
                     let response = JSON.parse(data)
                     if (response.code !== 200) {
-                        forms.currentItem.errorMessage = Scripts.capitalize(response.message)
+                        forms.item.errorMessage = Scripts.capitalize(response.message)
                     } else {
                         handleAuthResponse(response)
                     }
                 } else {
-                    forms.currentItem.errorMessage = error
+                    forms.item.errorMessage = error
                 }
             })
             netManager.makeRequest("POST",
@@ -47,12 +47,12 @@ ApplicationWindow {
                 if (error === "") {
                     let response = JSON.parse(data)
                     if (response.code !== 200) {
-                        forms.currentItem.errorMessage = Scripts.capitalize(response.message)
+                        forms.item.errorMessage = Scripts.capitalize(response.message)
                     } else {
                         handleAuthResponse(response)
                     }
                 } else {
-                    forms.currentItem.errorMessage = error
+                    forms.item.errorMessage = error
                 }
             })
             netManager.makeRequest("POST",
@@ -60,7 +60,7 @@ ApplicationWindow {
         }
 
         function handleAuthResponse(response) {
-            forms.currentItem.errorMessage = ""
+            forms.item.errorMessage = ""
             UserManager.saveToken(response.token, rememberToken)
             loginWindow.success()
         }
@@ -164,5 +164,3 @@ ApplicationWindow {
         }
     }
 }
-
-
