@@ -14,12 +14,14 @@ ApplicationWindow {
     minimumWidth: 640
     height: 720
     minimumHeight: 720
-    visible: false
+    visible: true
+    opacity: 0
     title: Qt.application.name
 
     QtObject {
         id: internal
         property SidebarItem currentActive: homeButton
+        property QtObject loginWindow
 
         function makeActive(item) {
             if (currentActive) {
@@ -31,6 +33,20 @@ ApplicationWindow {
 
         function initialize() {
             Language.set(Config.settings.language)
+            let loginComponent = Qt.createComponent("Login.qml")
+            loginWindow = loginComponent.createObject(appWindow)
+            loginWindow.success.connect(() => {
+                loginWindow.opacity = 0
+                appWindow.opacity = 1
+            })
+            loginWindow.exit.connect(() => {
+                appWindow.close()
+            })
+            loginWindow.opacity = 0
+        }
+
+        function showLoginWindow() {
+            internal.loginWindow.opacity = 1
         }
     }
 
@@ -101,19 +117,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         internal.initialize()
-
-        let loginComponent = Qt.createComponent("Login.qml")
-        let loginWindow = loginComponent.createObject(appWindow)
-        loginWindow.success.connect(() => {
-            loginWindow.destroy()
-            appWindow.show()
-        })
-        loginWindow.exit.connect(() => {
-            loginWindow.destroy()
-            appWindow.visible = true // make it visible because there's no way to close a hidden window
-            appWindow.close()
-        })
-        loginWindow.show()
+        internal.showLoginWindow()
     }
 }
 
