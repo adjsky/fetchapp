@@ -16,7 +16,7 @@ const (
 )
 
 // AuthMiddleware checks whether a user has JWT token
-func (service *Service) AuthMiddleware(next http.Handler) http.Handler {
+func (serv *service) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		authHeader := req.Header.Get("Authorization")
 		authData := strings.Split(authHeader, " ")
