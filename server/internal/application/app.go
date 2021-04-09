@@ -76,7 +76,7 @@ func (app *app) initializeServices() {
 }
 
 func migrateTable(db *sql.DB) {
-	_, err := db.Exec(migrationSceheme)
+	_, err := db.Exec(migrationScheme)
 	if err != nil {
 		log.Fatal("failed to migrate the database scheme")
 	}
