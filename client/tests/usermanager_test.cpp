@@ -12,13 +12,13 @@ TEST_CASE("UserManager") {
     }
 
     SECTION("getToken when there's no saved token returns an empty string") {
-        UserManager::remove();
+        userManager.removeToken();
         const QString& token{ userManager.getToken() };
         REQUIRE(token == "");
     }
 
     SECTION("Can get token from a file") {
-        UserManager::remove();
+        userManager.removeToken();
         QString tokenToSave{ "asd" };
         userManager.saveToken(tokenToSave, true);
         UserManager newUserManager{};
