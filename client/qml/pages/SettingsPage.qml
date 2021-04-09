@@ -21,6 +21,7 @@ Rectangle {
 
         Column {
             anchors.fill: parent
+            spacing: 5
 
             Row {
                 width: parent.width
