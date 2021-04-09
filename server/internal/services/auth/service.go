@@ -57,29 +57,29 @@ func (serv *service) Register(r *mux.Router) {
 
 func (serv *service) handleLogin(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
-	var reqStruct loginRequest
-	err := json.Unmarshal(data, &reqStruct)
+	var reqData loginRequest
+	err := json.Unmarshal(data, &reqData)
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if reqStruct.Email == "" || reqStruct.Password == "" {
+	if reqData.Email == "" || reqData.Password == "" {
 		handlers.RespondError(w, http.StatusBadRequest, "no password or email provided")
 		return
 	}
 	var password string
-	row := serv.Database.QueryRow("SELECT password FROM Users WHERE email = ?", reqStruct.Email)
+	row := serv.database.QueryRow("SELECT password FROM Users WHERE email = ?", reqData.Email)
 	err = row.Scan(&password)
 	if err != nil {
 		handlers.RespondError(w, http.StatusUnauthorized, "no user registered with this email")
 		return
 	}
-	if bcrypt.CompareHashAndPassword([]byte(password), []byte(reqStruct.Password)) != nil {
+	if bcrypt.CompareHashAndPassword([]byte(password), []byte(reqData.Password)) != nil {
 		handlers.RespondError(w, http.StatusUnauthorized, "wrong email/password pair")
 		return
 	}
-	claims := GenerateClaims(reqStruct.Email)
 	token, _ := GenerateTokenString(claims, serv.SecretKey)
+	claims := GenerateClaims(reqData.Email)
 	res := loginResponse{
 		Code:  http.StatusOK,
 		Token: token,
@@ -89,32 +89,32 @@ func (serv *service) handleLogin(w http.ResponseWriter, req *http.Request) {
 
 func (serv *service) handleSignup(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
-	var reqStruct signupRequest
-	err := json.Unmarshal(data, &reqStruct)
+	var reqData signupRequest
+	err := json.Unmarshal(data, &reqData)
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if reqStruct.Email == "" || reqStruct.Password == "" {
+	if reqData.Email == "" || reqData.Password == "" {
 		handlers.RespondError(w, http.StatusBadRequest, "no password or email provided")
 		return
 	}
-	matched := emailRegex.Match([]byte(reqStruct.Email))
+	matched := emailRegex.Match([]byte(reqData.Email))
 	if !matched {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid email address")
 		return
 	}
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.Password), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqData.Password), bcrypt.DefaultCost)
 	if err != nil {
 		fmt.Println("hash generating error in signup: ", err)
 	}
-	_, err = serv.Database.Exec("INSERT INTO Users (email, password) VALUES (?, ?)", reqStruct.Email, hashPassword)
+	_, err = serv.database.Exec("INSERT INTO Users (email, password) VALUES (?, ?)", reqData.Email, hashPassword)
 	if err != nil {
 		handlers.RespondError(w, http.StatusConflict, "this email is registered")
 		return
 	}
-	claims := GenerateClaims(reqStruct.Email)
 	token, err := GenerateTokenString(claims, serv.SecretKey)
+	claims := GenerateClaims(reqData.Email)
 	if err != nil {
 		log.Println(err)
 	}
@@ -135,13 +135,13 @@ func (serv *service) handleRestore(w http.ResponseWriter, req *http.Request) {
 
 func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
-	var reqStruct restoreRequest
-	err := json.Unmarshal(data, &reqStruct)
+	var reqData restoreRequest
+	err := json.Unmarshal(data, &reqData)
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if reqStruct.OldPassword == "" || reqStruct.NewPassword == "" {
+	if reqData.OldPassword == "" || reqData.NewPassword == "" {
 		handlers.RespondError(w, http.StatusBadRequest, "no old or new password provided")
 		return
 	}
@@ -154,11 +154,11 @@ func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 	var userPassword string
 	row := serv.Database.QueryRow("SELECT ID, password FROM Users WHERE email = ?", userClaims.Email)
 	row.Scan(&userID, &userPassword)
-	if bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(reqStruct.OldPassword)) != nil {
+	if bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(reqData.OldPassword)) != nil {
 		handlers.RespondError(w, http.StatusUnauthorized, "old password doesn't correspond to account password")
 		return
 	}
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqStruct.NewPassword), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(reqData.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		fmt.Println("hash generating error in restore: ", err)
 	}
@@ -173,13 +173,13 @@ func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 
 func (serv *service) handleValid(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
-	var reqStruct validRequest
-	err := json.Unmarshal(data, &reqStruct)
+	var reqData validRequest
+	err := json.Unmarshal(data, &reqData)
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if reqStruct.Token == "" {
+	if reqData.Token == "" {
 		handlers.RespondError(w, http.StatusBadRequest, "no token provided")
 		return
 	}
