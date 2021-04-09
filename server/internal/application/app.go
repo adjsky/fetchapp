@@ -18,10 +18,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const migrationSceheme string = "CREATE TABLE IF NOT EXISTS 'Users' (" +
-	"'email'	TEXT NOT NULL UNIQUE," +
+const migrationScheme string = "CREATE TABLE IF NOT EXISTS 'Users' (" +
+	"'ID' INTEGER PRIMARY KEY," +
 	"'password'	TEXT NOT NULL," +
-	"'ID'		INTEGER PRIMARY KEY);"
+	"'email' TEXT NOT NULL UNIQUE);"
 
 type app struct {
 	Config   *config.Config
