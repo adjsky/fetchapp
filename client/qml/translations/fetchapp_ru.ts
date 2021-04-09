@@ -78,19 +78,24 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../pages/SettingsPage.qml" line="30"/>
+        <location filename="../pages/SettingsPage.qml" line="33"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../pages/SettingsPage.qml" line="41"/>
+        <location filename="../pages/SettingsPage.qml" line="44"/>
         <source>English</source>
         <translation>Английский</translation>
     </message>
     <message>
-        <location filename="../pages/SettingsPage.qml" line="45"/>
+        <location filename="../pages/SettingsPage.qml" line="48"/>
         <source>Russian</source>
         <translation>Русский</translation>
+    </message>
+    <message>
+        <location filename="../pages/SettingsPage.qml" line="66"/>
+        <source>Sign out</source>
+        <translation>Выйти</translation>
     </message>
 </context>
 <context>
