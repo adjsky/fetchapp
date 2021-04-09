@@ -80,7 +80,8 @@ ApplicationWindow {
             if (response.valid) {
                 loginWindow.success()
             } else {
-                showForm()
+                busyIndicator.running = false
+                showLoginForm()
             }
         }
 
