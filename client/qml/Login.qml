@@ -85,7 +85,6 @@ ApplicationWindow {
         }
 
         function showForm() {
-            busyIndicator.running = false
             let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
             forms.item.loginButtonClicked.connect((email, password, remember) => {
                                                     rememberToken = remember
@@ -146,12 +145,14 @@ ApplicationWindow {
         id: busyIndicator
         anchors.centerIn: parent
         indicatorColor: "#ffffff"
+        running: true
     }
 
     Component.onCompleted: {
         let token = UserManager.getToken()
         if (token === "") {
             internal.showForm()
+            busyIndicator.running = false
         } else {
             internal.validRequest(token)
         }
