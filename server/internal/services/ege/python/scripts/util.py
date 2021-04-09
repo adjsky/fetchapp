@@ -22,7 +22,7 @@ def get_available():
 def question_type_implemented(question_num, type_):
     type_enum = getattr(scripts, "Types_"+str(question_num))
     if type_enum:
-        return type_ > 0 and type_ <= len(type_enum)
+        return 0 < type_ <= len(type_enum)
     return False
 
 
