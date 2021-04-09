@@ -14,7 +14,7 @@ public:
                                bool saveToFile = true);
     Q_INVOKABLE QString getToken();
 
-    Q_INVOKABLE static bool remove();
+    Q_INVOKABLE void removeToken();
 
 private:
     QString cachedToken_;

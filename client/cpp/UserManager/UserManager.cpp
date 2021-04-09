@@ -39,7 +39,7 @@ QString UserManager::getToken()
     return cachedToken_;
 }
 
-bool UserManager::remove()
+void UserManager::removeToken()
 {
     return QFile::remove(filePath_);
 }
