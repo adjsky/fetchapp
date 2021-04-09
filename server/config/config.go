@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// Config holds the data required to start the application
+// Config holds data required to start the application
 type Config struct {
 	SecretKey []byte
 	Realm     string
