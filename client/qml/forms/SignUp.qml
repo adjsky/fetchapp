@@ -18,7 +18,7 @@ Rectangle {
     property color fieldBorderColor: errorMessage !== "" ? errorColor : fieldBackgroundColor
     property color fieldBorderFocusColor: errorMessage !== "" ? errorColor : backgroundColor
 
-    signal signUpButtonPressed(string email, string password)
+    signal signUpButtonClicked(string email, string password)
     signal returned
 
     color: backgroundColor
@@ -39,7 +39,9 @@ Rectangle {
                 if (!validEmail) {
                     signUpForm.errorMessage = "Invalid email address"
                 }
-                signUpForm.signUpButtonPressed(email, password)
+                else {
+                    signUpForm.signUpButtonClicked(email, password)
+                }
             }
         }
     }
@@ -155,7 +157,7 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 27
 
-            onPressed: internal.signUp()
+            onClicked: internal.signUp()
 
             contentItem: Text {
                 text: qsTr("SIGN UP")

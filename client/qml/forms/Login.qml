@@ -18,8 +18,8 @@ Rectangle {
     property color fieldBorderColor: errorMessage !== "" ? errorColor : fieldBackgroundColor
     property color fieldBorderFocusColor: errorMessage !== "" ? errorColor : backgroundColor
 
-    signal loginButtonPressed(string email, string password, bool remember)
-    signal signUpButtonPressed
+    signal loginButtonClicked(string email, string password, bool remember)
+    signal signUpButtonClicked
 
     color: backgroundColor
     radius: 10
@@ -39,7 +39,9 @@ Rectangle {
                 if (!validEmail) {
                     loginForm.errorMessage = "Invalid email address"
                 }
-                loginForm.loginButtonPressed(email, password, rememberBox.checked)
+                else {
+                    loginForm.loginButtonClicked(email, password, rememberBox.checked)
+                }
             }
         }
     }
@@ -178,7 +180,7 @@ Rectangle {
                     width: parent.width
                     height: 45
 
-                    onPressed: internal.login()
+                    onClicked: internal.login()
 
                     contentItem: Text {
                         text: qsTr("LOGIN")
@@ -223,7 +225,7 @@ Rectangle {
 
                     onClicked: {
                         loginForm.errorMessage = ""
-                        loginForm.signUpButtonPressed()
+                        loginForm.signUpButtonClicked()
                     }
 
                     contentItem: Text {

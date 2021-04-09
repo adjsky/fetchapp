@@ -87,16 +87,16 @@ ApplicationWindow {
         function showForm() {
             busyIndicator.running = false
             let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
-            loginForm.loginButtonPressed.connect((email, password, remember) => {
+            forms.item.loginButtonClicked.connect((email, password, remember) => {
                                                     rememberToken = remember
                                                     internal.loginRequest(email, password)
                                                  })
             loginForm.signUpButtonPressed.connect(() => {
                 let signupForm = forms.push("forms/SignUp.qml", StackView.Immediate)
-                signupForm.signUpButtonPressed.connect((email, password) => {
                     internal.signUpRequest(email, password)
                 })
                 signupForm.returned.connect(() => forms.pop(StackView.Immediate))
+            forms.item.signUpButtonClicked.connect(() => {
             })
         }
     }
