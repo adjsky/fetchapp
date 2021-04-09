@@ -11,3 +11,4 @@ server/.vscode
 server/.idea
 server/internal/services/ege/python/.vscode
 client/cpp/.idea
+server/init_copy.sh
