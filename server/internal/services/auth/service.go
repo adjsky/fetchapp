@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"server/config"
 	"server/pkg/handlers"
 	"server/pkg/middlewares"
 	"sync"
@@ -28,6 +29,8 @@ type restoreSession struct {
 }
 
 type service struct {
+	config          *config.Config
+	database        *sql.DB
 	restoreSessions map[string]restoreSession
 	restoreMutex    sync.RWMutex
 }
