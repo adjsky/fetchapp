@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// CheckAuthorized checks whether given request has a bearer token and returns it
+// CheckAuthorized checks whether a given request has a bearer token and returns it
 func CheckAuthorized(req *http.Request) bool {
 	authHeader := req.Header.Get("Authorization")
 	authData := strings.Split(authHeader, " ")

@@ -15,7 +15,7 @@ import (
 	"github.com/dchest/uniuri"
 	"github.com/gorilla/mux"
 
-	// initialize driver
+	// initialize a driver
 	_ "github.com/mattn/go-sqlite3"
 )
 
