@@ -56,11 +56,11 @@ func (serv *service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 		handlers.RespondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	filename := saveToFile(serv.TempDir, text)
-	filepath := filepath.Join(serv.TempDir, filename)
-	defer os.Remove(filepath)
+	fName := helpers.SaveToFile(serv.tempDir, text)
+	fPath := filepath.Join(serv.tempDir, fName)
+	defer os.Remove(fPath)
 	questionNumber, _ := strconv.Atoi(mux.Vars(req)["number"]) // can ignore an error since router validates that path is a number
-	result, err := processQuestion(questionNumber, filepath, &questionReq)
+	result, err := processQuestion(questionNumber, fPath, &reqData)
 	result = strings.TrimRight(result, "\r\n") // since python prints everything with an endline character we need to trim it
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, result)
