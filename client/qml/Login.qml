@@ -84,19 +84,25 @@ ApplicationWindow {
             }
         }
 
-        function showForm() {
-            let loginForm = forms.push("forms/Login.qml", StackView.Immediate)
+        function showLoginForm() {
+            forms.source = "forms/Login.qml"
             forms.item.loginButtonClicked.connect((email, password, remember) => {
                                                     rememberToken = remember
                                                     internal.loginRequest(email, password)
                                                  })
-            loginForm.signUpButtonPressed.connect(() => {
-                let signupForm = forms.push("forms/SignUp.qml", StackView.Immediate)
-                    internal.signUpRequest(email, password)
-                })
-                signupForm.returned.connect(() => forms.pop(StackView.Immediate))
             forms.item.signUpButtonClicked.connect(() => {
+                showSignUpForm()
             })
+        }
+
+        function showSignUpForm() {
+            forms.source = "forms/SignUp.qml"
+            forms.item.signUpButtonClicked.connect((email, password) => {
+                internal.signUpRequest(email, password)
+            })
+            forms.item.returned.connect(() => {
+                                            showLoginForm()
+                                        })
         }
     }
 
@@ -151,8 +157,8 @@ ApplicationWindow {
     Component.onCompleted: {
         let token = UserManager.getToken()
         if (token === "") {
-            internal.showForm()
             busyIndicator.running = false
+            internal.showLoginForm()
         } else {
             internal.validRequest(token)
         }
