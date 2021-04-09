@@ -91,7 +91,7 @@ func (serv *service) handleAvailable(w http.ResponseWriter, req *http.Request) {
 func (serv *service) handleQuestionTypes(w http.ResponseWriter, req *http.Request) {
 	questionNumber := mux.Vars(req)["number"]
 	result, err := executeScript(pythonScriptPath, "types", questionNumber)
-	result = strings.TrimRight(result, "\r\n") // since python prints everything with endline character we need to trim it
+	result = strings.TrimRight(result, "\r\n") // since python prints everything with an endline character we need to trim it
 	if err != nil {
 		handlers.RespondError(w, http.StatusInternalServerError, result)
 		return
