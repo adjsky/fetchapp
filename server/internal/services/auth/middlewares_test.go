@@ -8,9 +8,7 @@ import (
 )
 
 func TestAuthMiddleware(t *testing.T) {
-	authService := Service{
-		SecretKey: config.Get().SecretKey,
-	}
+	authService := NewService(config.Get(), nil)
 	req, err := http.NewRequest("POST", "/random", nil)
 	if err != nil {
 		t.Error(err.Error())

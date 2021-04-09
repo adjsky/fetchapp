@@ -10,6 +10,7 @@ import (
 	"server/internal/services/ege"
 	"server/pkg/handlers"
 	"server/pkg/middlewares"
+	"time"
 
 	"github.com/dchest/uniuri"
 	"github.com/gorilla/mux"
@@ -61,10 +62,13 @@ func (app *app) initializeServices() {
 	app.Router.NotFoundHandler = http.HandlerFunc(handlers.NotFound)
 
 	authRouter := app.Router.PathPrefix("/auth").Subrouter()
-	authService := auth.Service{
-		SecretKey: app.Config.SecretKey,
-		Database:  app.Database,
-	}
+	authService := auth.NewService(app.Config, app.Database)
+	go func() {
+		for {
+			time.Sleep(time.Minute * 30)
+			authService.CheckExpire()
+		}
+	}()
 	authService.Register(authRouter)
 
 	apiRouter := app.Router.PathPrefix("/api").Subrouter()
