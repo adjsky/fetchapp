@@ -78,8 +78,8 @@ func (serv *service) handleLogin(w http.ResponseWriter, req *http.Request) {
 		handlers.RespondError(w, http.StatusUnauthorized, "wrong email/password pair")
 		return
 	}
-	token, _ := GenerateTokenString(claims, serv.SecretKey)
 	claims := GenerateClaims(reqData.Email)
+	token, _ := GenerateTokenString(claims, serv.config.SecretKey)
 	res := loginResponse{
 		Code:  http.StatusOK,
 		Token: token,
@@ -113,8 +113,8 @@ func (serv *service) handleSignup(w http.ResponseWriter, req *http.Request) {
 		handlers.RespondError(w, http.StatusConflict, "this email is registered")
 		return
 	}
-	token, err := GenerateTokenString(claims, serv.SecretKey)
 	claims := GenerateClaims(reqData.Email)
+	token, err := GenerateTokenString(claims, serv.config.SecretKey)
 	if err != nil {
 		log.Println(err)
 	}
@@ -145,15 +145,15 @@ func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 		handlers.RespondError(w, http.StatusBadRequest, "no old or new password provided")
 		return
 	}
-	userClaims, err := GetClaims(GetToken(req), serv.SecretKey)
+	userClaims, err := GetClaims(GetToken(req), serv.config.SecretKey)
 	if err != nil {
 		handlers.RespondError(w, http.StatusBadRequest, "invalid auth token provided")
 		return
 	}
 	var userID int
 	var userPassword string
-	row := serv.Database.QueryRow("SELECT ID, password FROM Users WHERE email = ?", userClaims.Email)
 	row.Scan(&userID, &userPassword)
+	row := serv.database.QueryRow("SELECT ID, password FROM Users WHERE email = ?", userClaims.Email)
 	if bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(reqData.OldPassword)) != nil {
 		handlers.RespondError(w, http.StatusUnauthorized, "old password doesn't correspond to account password")
 		return
@@ -183,7 +183,7 @@ func (serv *service) handleValid(w http.ResponseWriter, req *http.Request) {
 		handlers.RespondError(w, http.StatusBadRequest, "no token provided")
 		return
 	}
-	_, err = GetClaims(reqStruct.Token, serv.SecretKey)
+	_, err = GetClaims(reqData.Token, serv.config.SecretKey)
 	res := validResponse{
 		Code:  http.StatusOK,
 		Valid: err == nil,
