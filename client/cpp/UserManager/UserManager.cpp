@@ -41,5 +41,6 @@ QString UserManager::getToken()
 
 void UserManager::removeToken()
 {
-    return QFile::remove(filePath_);
+    cachedToken_ = "";
+    QFile::remove(filePath_);
 }
