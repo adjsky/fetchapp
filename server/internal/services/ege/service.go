@@ -14,20 +14,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Service provides functionality to solve EGE problems
-type Service struct {
-	TempDir string
+type service struct {
+	tempDir string
 }
 
 // Register service in a provided router
-func (serv *Service) Register(r *mux.Router) {
+func (serv *service) Register(r *mux.Router) {
 	multipartMiddleware := middlewares.ContentTypeValidator("multipart/related")
 	r.HandleFunc("/{number:[0-9]+}/types", serv.handleQuestionTypes).Methods("GET")
 	r.Handle("/{number:[0-9]+}", multipartMiddleware(http.HandlerFunc(serv.handleQuestion))).Methods("POST")
 	r.HandleFunc("/available", serv.handleAvailable).Methods("GET")
 }
 
-func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
+func (serv *service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 	mReader := multipart.NewReader(req.Body, req.Context().Value(middlewares.BoundaryID).(string))
 	metadataPart, err := mReader.NextPart()
 	if err != nil {
@@ -68,7 +67,7 @@ func (serv *Service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-func (serv *Service) handleAvailable(w http.ResponseWriter, req *http.Request) {
+func (serv *service) handleAvailable(w http.ResponseWriter, req *http.Request) {
 	result, err := executeScript(pythonScriptPath, "available")
 	result = strings.TrimRight(result, "\r\n") // since python prints everything with an endline character we need to trim it
 	if err != nil {
@@ -82,7 +81,7 @@ func (serv *Service) handleAvailable(w http.ResponseWriter, req *http.Request) {
 	handlers.Respond(w, &res, res.Code)
 }
 
-func (serv *Service) handleQuestionTypes(w http.ResponseWriter, req *http.Request) {
+func (serv *service) handleQuestionTypes(w http.ResponseWriter, req *http.Request) {
 	questionNumber := mux.Vars(req)["number"]
 	result, err := executeScript(pythonScriptPath, "types", questionNumber)
 	result = strings.TrimRight(result, "\r\n") // since python prints everything with endline character we need to trim it
