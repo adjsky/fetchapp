@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"server/pkg/handlers"
+	"server/pkg/helpers"
 	"server/pkg/middlewares"
 	"strconv"
 	"strings"
@@ -40,9 +41,9 @@ func (serv *service) handleQuestion(w http.ResponseWriter, req *http.Request) {
 		handlers.RespondError(w, http.StatusBadRequest, "no metadata part provided")
 		return
 	}
-	var questionReq question24Request
-	parseBodyPartToJson(metadataPart, &questionReq)
-	if err != nil || questionReq.Type == 0 {
+	var reqData question24Request
+	err = helpers.ParseBodyPartToJson(metadataPart, &reqData)
+	if err != nil || reqData.Type == 0 {
 		handlers.RespondError(w, http.StatusBadRequest, "wrong metadata body")
 		return
 	}
