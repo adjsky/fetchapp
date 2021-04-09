@@ -23,7 +23,7 @@ func RespondError(w http.ResponseWriter, code int, message string) {
 }
 
 // NotFound is called when a client tries to access a nonexistent resource
-func NotFound(w http.ResponseWriter, req *http.Request) {
+func NotFound(w http.ResponseWriter, _ *http.Request) {
 	res := responses.Error{
 		Code:    http.StatusNotFound,
 		Message: "no resource found",
