@@ -60,6 +60,15 @@ func (serv *service) Register(r *mux.Router) {
 	r.Handle("/valid", appJsonMiddleware(http.HandlerFunc(serv.handleValid))).Methods("POST")
 }
 
+// CheckExpire checks and deletes outdated restore tokens
+func (serv *service) CheckExpire() {
+	for k, v := range serv.restoreSessions {
+		timePassed := time.Since(v.createdAt)
+		if timePassed.Seconds() >= restoreSessionDuration.Seconds() {
+			delete(serv.restoreSessions, k)
+		}
+	}
+}
 
 func (serv *service) handleLogin(w http.ResponseWriter, req *http.Request) {
 	data, _ := io.ReadAll(req.Body)
