@@ -71,9 +71,7 @@ func (app *app) initializeServices() {
 	apiRouter.Use(authService.AuthMiddleware)
 
 	egeRouter := apiRouter.PathPrefix("/ege").Subrouter()
-	egeService := ege.Service{
-		TempDir: app.TempDir,
-	}
+	egeService := ege.NewService(app.TempDir)
 	egeService.Register(egeRouter)
 }
 

@@ -18,6 +18,13 @@ type service struct {
 	tempDir string
 }
 
+// NewService creates a new EGE service
+func NewService(tmpDir string) *service {
+	return &service{
+		tempDir: tmpDir,
+	}
+}
+
 // Register service in a provided router
 func (serv *service) Register(r *mux.Router) {
 	multipartMiddleware := middlewares.ContentTypeValidator("multipart/related")
