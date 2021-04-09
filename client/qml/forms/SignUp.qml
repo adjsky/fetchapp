@@ -195,4 +195,11 @@ Rectangle {
             }
         }
     }
+
+    Shortcut {
+        sequence: "return"
+        onActivated: {
+            internal.signUp()
+        }
+    }
 }

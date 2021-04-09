@@ -274,4 +274,11 @@ Rectangle {
             }
         }
     }
+
+    Shortcut {
+        sequence: "return"
+        onActivated: {
+            internal.login()
+        }
+    }
 }
