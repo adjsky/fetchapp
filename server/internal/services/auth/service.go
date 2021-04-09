@@ -213,9 +213,12 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 		}
 		handlers.Respond(w, &res, res.Code)
 		go func() {
-			_ = helpers.SendEmail(&serv.config.Smtp,
+			err := helpers.SendEmail(&serv.config.Smtp,
 				[]string{reqData.Email},
 				[]byte("Subject: Restore account\n"+token))
+			if err != nil {
+				fmt.Println(err)
+			}
 		}()
 	} else {
 		if reqData.NewPassword == "" || reqData.OldPassword == "" {
