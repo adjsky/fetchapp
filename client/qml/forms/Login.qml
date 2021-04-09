@@ -26,7 +26,6 @@ Rectangle {
     implicitHeight: 360
     implicitWidth: 360
 
-    // Internal
     QtObject {
         id: internal
 
