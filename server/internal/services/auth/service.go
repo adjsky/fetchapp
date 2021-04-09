@@ -12,6 +12,7 @@ import (
 	"server/pkg/handlers"
 	"server/pkg/helpers"
 	"server/pkg/middlewares"
+	"strings"
 	"sync"
 	"time"
 
@@ -262,4 +263,25 @@ func (serv *service) handleValid(w http.ResponseWriter, req *http.Request) {
 		Valid: err == nil,
 	}
 	handlers.Respond(w, &res, res.Code)
+}
+
+// CheckAuthorized checks whether a given request has a bearer token and returns it
+func CheckAuthorized(req *http.Request) bool {
+	authHeader := req.Header.Get("Authorization")
+	authData := strings.Split(authHeader, " ")
+	if len(authData) == 0 {
+		return false
+	}
+	if authData[0] != "Bearer" || len(authData) != 2 {
+		return false
+	}
+	return true
+}
+
+// GetToken returns a token from a request or an empty string if an user is not authorized or has an invalid authorization header
+func GetToken(req *http.Request) string {
+	if CheckAuthorized(req) {
+		return strings.Split(req.Header.Get("Authorization"), " ")[1]
+	}
+	return ""
 }
