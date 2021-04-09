@@ -19,7 +19,7 @@ func SendEmail(smtpData *config.SmtpData, to []string, message []byte) error {
 	return err
 }
 
-// ParseBodyPartToJson parses a given multipart and unmarshals its content
+// ParseBodyPartToJson parses a given multipart and unmarshalls its content
 func ParseBodyPartToJson(part *multipart.Part, v interface{}) error {
 	metadataBody, err := io.ReadAll(part)
 	if err != nil {
