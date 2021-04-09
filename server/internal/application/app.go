@@ -23,8 +23,7 @@ const migrationSceheme string = "CREATE TABLE IF NOT EXISTS 'Users' (" +
 	"'password'	TEXT NOT NULL," +
 	"'ID'		INTEGER PRIMARY KEY);"
 
-// App struct is the main entry to the application
-type App struct {
+type app struct {
 	Config   *config.Config
 	Database *sql.DB
 	Router   *mux.Router
@@ -32,7 +31,7 @@ type App struct {
 }
 
 // New creates the application instance
-func New() *App {
+func New() *app {
 	cfg := config.Get()
 	db, err := sql.Open("sqlite3", "../database.db")
 	if err != nil {
@@ -43,7 +42,7 @@ func New() *App {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &App{
+	return &app{
 		Config:   cfg,
 		Database: db,
 		Router:   mux.NewRouter(),
@@ -51,12 +50,13 @@ func New() *App {
 	}
 }
 
-func (app *App) Close() {
-	app.Database.Close()
-	os.RemoveAll(app.TempDir)
+// Close does cleaning operations on the application
+func (app *app) Close() {
+	_ = app.Database.Close()
+	_ = os.RemoveAll(app.TempDir)
 }
 
-func (app *App) initializeServices() {
+func (app *app) initializeServices() {
 	app.Router.Use(middlewares.Log)
 	app.Router.NotFoundHandler = http.HandlerFunc(handlers.NotFound)
 
@@ -85,7 +85,7 @@ func migrateTable(db *sql.DB) {
 }
 
 // Start the server
-func (app *App) Start() {
+func (app *app) Start() {
 	app.initializeServices()
 	log.Println("Starting server on port: " + app.Config.Port)
 	log.Fatal(http.ListenAndServe(app.Config.Realm+":"+app.Config.Port, app.Router))
