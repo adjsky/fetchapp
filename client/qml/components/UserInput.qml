@@ -17,6 +17,7 @@ TextField {
     placeholderText: qsTr("")
     placeholderTextColor: "#989b9c"
     color: "#989b9c"
+    selectionColor: "#ffffff"
 
     QtObject {
         id: internal
