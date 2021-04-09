@@ -152,8 +152,8 @@ func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 	}
 	var userID int
 	var userPassword string
-	row.Scan(&userID, &userPassword)
 	row := serv.database.QueryRow("SELECT ID, password FROM Users WHERE email = ?", userClaims.Email)
+	_ = row.Scan(&userID, &userPassword)
 	if bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(reqData.OldPassword)) != nil {
 		handlers.RespondError(w, http.StatusUnauthorized, "old password doesn't correspond to account password")
 		return
@@ -162,7 +162,7 @@ func (serv *service) handleRestoreAuth(w http.ResponseWriter, req *http.Request)
 	if err != nil {
 		fmt.Println("hash generating error in restore: ", err)
 	}
-	serv.Database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, userID)
+	_, _ = serv.database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, userID)
 	handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
 }
 
