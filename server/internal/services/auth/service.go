@@ -35,6 +35,16 @@ type service struct {
 	restoreMutex    sync.RWMutex
 }
 
+// NewService creates a new auth service
+func NewService(cfg *config.Config, db *sql.DB) *service {
+	s := service{
+		config:          cfg,
+		database:        db,
+		restoreSessions: make(map[string]restoreSession),
+	}
+	return &s
+}
+
 // Register auth service
 func (serv *service) Register(r *mux.Router) {
 	appJsonMiddleware := middlewares.ContentTypeValidator("application/json")
