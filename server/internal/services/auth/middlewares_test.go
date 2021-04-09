@@ -42,7 +42,7 @@ func TestAuthMiddleware(t *testing.T) {
 	t.Run("Middleware should pass a request with a valid token", func(t *testing.T) {
 		writer := httptest.NewRecorder()
 		claims := GenerateClaims("loh@mail.ru")
-		token, _ := GenerateTokenString(claims, authService.SecretKey)
+		token, _ := GenerateTokenString(claims, authService.config.SecretKey)
 		req.Header.Set("Authorization", "Bearer "+token)
 		handler.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {

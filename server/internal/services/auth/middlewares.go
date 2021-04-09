@@ -32,7 +32,7 @@ func (serv *service) AuthMiddleware(next http.Handler) http.Handler {
 			handlers.RespondError(w, http.StatusUnauthorized, "no token provided")
 			return
 		}
-		claims, err := GetClaims(authData[1], service.SecretKey)
+		claims, err := GetClaims(authData[1], serv.config.SecretKey)
 		if err != nil {
 			handlers.RespondError(w, http.StatusUnauthorized, "invalid auth token provided")
 			return
