@@ -5,5 +5,7 @@ build-client-Desktop_Qt_5_15_2_GCC_64bit-Release/*
 server/env.sh
 server/database.db
 server/internal/services/ege/python/env
+server/internal/services/ege/python/venv
 server/internal/services/ege/python/scripts/__pycache__/*
 server/.vscode
+server/.idea
