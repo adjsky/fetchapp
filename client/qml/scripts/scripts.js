@@ -1,19 +1,11 @@
 const fileScheme = "file://"
 
 function validateEmail(email) {
-    let emails = /^\S+@\S+$/.exec(email)
-    if (emails === null) {
-        return false
-    }
-    return true
+    return /^\S+@\S+$/.exec(email) !== null
 }
 
 function validateTextFile(filePath) {
-    let filePaths = /\.(txt)$/i.exec(filePath)
-    if (filePaths === null) {
-        return false
-    }
-    return true
+    return /\.(txt)$/i.exec(filePath) !== null
 }
 
 function dropScheme(filePath) {
