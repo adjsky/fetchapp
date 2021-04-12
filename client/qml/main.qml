@@ -37,7 +37,7 @@ ApplicationWindow {
         }
 
         function showLoginWindow() {
-            let loginComponent = Qt.createComponent("Login.qml")
+            let loginComponent = Qt.createComponent("Authorize.qml")
             loginWindow = loginComponent.createObject(appWindow)
             loginWindow.success.connect(() => {
                                             loginWindow.destroy()
