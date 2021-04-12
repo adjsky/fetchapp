@@ -118,13 +118,11 @@ Rectangle {
 
                 CheckBox {
                     id: rememberBox
+                    height: parent.height
                     text: qsTr("Remember me")
-                    font.pointSize: 10
                     spacing: 0
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    font.family: "Roboto"
 
                     indicator: Rectangle {
                         width: userControls.height
@@ -149,9 +147,10 @@ Rectangle {
 
                     contentItem: Text {
                         text: rememberBox.text
-                        font: rememberBox.font
-                        verticalAlignment: Qt.AlignVCenter
+                        font.family: "Roboto"
+                        font.pointSize: 10
                         color: Colors.font
+                        verticalAlignment: Text.AlignVCenter
                         leftPadding: rememberBox.indicator.width + rememberBox.spacing
                     }
                 }
