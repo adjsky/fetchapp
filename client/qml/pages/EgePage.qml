@@ -47,7 +47,7 @@ Rectangle {
         function setQuestionsModel() {
             let netManager = new NetworkManager(Constants.serverPath + "/api/ege/available")
             netManager.setAuthToken(UserManager.getToken())
-            netManager.finished.connect((error, data) => {
+            netManager.finished.connect((data, error) => {
                                             if (error === "") {
                                                 let response = JSON.parse(data)
                                                 if (response.code === 200) {
@@ -70,7 +70,7 @@ Rectangle {
         function setQuestionTypesModel(question_number) {
             let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + question_number + "/types")
             netManager.setAuthToken(UserManager.getToken())
-            netManager.finished.connect((error, data) => {
+            netManager.finished.connect((data, error) => {
                                             if (error === "") {
                                                 let response = JSON.parse(data)
                                                 if (response.code === 200) {
@@ -113,7 +113,6 @@ Rectangle {
                                                      {"Content-Type": "text/plain",
                                                       "Body": Scripts.fileScheme + filePathInput.text
                                                      }])
-            netManager.finished.connect(function(err, data) {
                 if (err === "") {
                     let response = JSON.parse(data)
                     if (response["code"] === 200) {
@@ -126,6 +125,7 @@ Rectangle {
                     console.log(err, data)
                 }
             })
+            netManager.finished.connect((data, error) => {
         }
     }
 

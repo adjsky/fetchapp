@@ -18,7 +18,7 @@ public:
     Q_INVOKABLE void setAuthToken(const QString& token);
 
     signals:
-        void finished(const QString& error, const QByteArray& data);
+        void finished(const QByteArray& data, const QString& error);
 
 private:
     void responseReceived(QNetworkReply* reply);

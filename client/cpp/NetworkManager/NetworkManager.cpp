@@ -73,12 +73,12 @@ void NetworkManager::setAuthToken(const QString& token)
 void NetworkManager::responseReceived(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::ConnectionRefusedError) {
-        emit finished("Server is not available", "");
+        emit finished("", "Server is not available");
     }
     else if (reply->error() == QNetworkReply::ContentOperationNotPermittedError) {
-        emit finished("Method is not allowed", "");
+        emit finished("", "Method is not allowed");
     }
     else {
-        emit finished("", reply->readAll());
+        emit finished(reply->readAll(), "");
     }
 }
