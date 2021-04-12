@@ -50,7 +50,7 @@ Rectangle {
 
         Label {
             id: loginLabel
-            color: excelFontColor
+            color: Colors.excelFont
             text: qsTr("Sign up")
             font.family: "Roboto"
             anchors.horizontalCenter: parent.horizontalCenter
