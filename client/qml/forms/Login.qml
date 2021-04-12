@@ -15,10 +15,10 @@ Rectangle {
     signal loginButtonClicked(string email, string password, bool remember)
     signal signUpButtonClicked
 
-    radius: 10
     implicitHeight: 360
     implicitWidth: 360
     color: Colors.background
+    radius: 10
 
     QtObject {
         id: internal
