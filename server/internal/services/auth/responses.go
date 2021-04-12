@@ -14,6 +14,11 @@ type restoreResponse struct {
 	Code int `json:"code"`
 }
 
+type restoreValidResponse struct {
+	Code  int  `json:"code"`
+	Valid bool `json:"valid"`
+}
+
 type validResponse struct {
 	Code  int  `json:"code"`
 	Valid bool `json:"valid"`

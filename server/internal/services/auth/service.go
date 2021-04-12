@@ -58,6 +58,7 @@ func (serv *service) Register(r *mux.Router) {
 	r.Handle("/login", appJsonMiddleware(http.HandlerFunc(serv.handleLogin))).Methods("POST")
 	r.Handle("/signup", appJsonMiddleware(http.HandlerFunc(serv.handleSignup))).Methods("POST")
 	r.Handle("/restore", appJsonMiddleware(http.HandlerFunc(serv.handleRestore))).Methods("PUT")
+	r.Handle("/restore/valid", appJsonMiddleware(http.HandlerFunc(serv.handleRestoreValid))).Methods("POST")
 	r.Handle("/valid", appJsonMiddleware(http.HandlerFunc(serv.handleValid))).Methods("POST")
 }
 
@@ -264,6 +265,26 @@ func (serv *service) handleValid(w http.ResponseWriter, req *http.Request) {
 	res := validResponse{
 		Code:  http.StatusOK,
 		Valid: err == nil,
+	}
+	handlers.Respond(w, &res, res.Code)
+}
+
+func (serv *service) handleRestoreValid(w http.ResponseWriter, req *http.Request) {
+	data, _ := io.ReadAll(req.Body)
+	var reqData restoreValidRequest
+	err := json.Unmarshal(data, &reqData)
+	if err != nil {
+		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+	if reqData.Code == "" || reqData.Email == "" {
+		handlers.RespondError(w, http.StatusBadRequest, "no code or email provided")
+		return
+	}
+	_, ok := serv.restoreSessions[reqData.Code]
+	res := validResponse{
+		Code:  http.StatusOK,
+		Valid: ok,
 	}
 	handlers.Respond(w, &res, res.Code)
 }

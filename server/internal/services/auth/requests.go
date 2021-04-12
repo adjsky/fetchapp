@@ -17,6 +17,11 @@ type restoreRequest struct {
 	Code       string `json:"code"`
 }
 
+type restoreValidRequest struct {
+	Email string `json:"email"`
+	Code string `json:"code"`
+}
+
 type validRequest struct {
 	Token string `json:"token"`
 }
