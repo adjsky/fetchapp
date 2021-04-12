@@ -144,7 +144,7 @@ Rectangle {
             }
         }
 
-        Button {
+        CustomButton {
             id: signUpButton
             width: parent.width
             height: 45
@@ -152,26 +152,9 @@ Rectangle {
             anchors.bottomMargin: 27
             fontHoverColor: Colors.excelFont
             fontColor: Colors.excelFont
+            text: qsTr("SIGN UP")
 
             onClicked: internal.signUp()
-
-            contentItem: Text {
-                text: qsTr("SIGN UP")
-                font.pointSize: 10
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Roboto"
-                color: excelFontColor
-
-                scale: signUpButton.down ? 0.95 : 1
-
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: 100
-                        easing.type: Easing.InOutCubic
-                    }
-                }
-            }
 
             background: Rectangle {
                 gradient: Gradient {
@@ -179,8 +162,8 @@ Rectangle {
                     GradientStop { position: 1.0; color: Colors.gradientStop }
                     orientation: Gradient.Horizontal
                 }
-                scale: signUpButton.down ? 0.95 : 1
-                radius: 5
+                scale: signUpButton.down ? signUpButton.scaleSize : 1
+                radius: signUpButton.radius
 
                 Behavior on scale {
                     NumberAnimation {

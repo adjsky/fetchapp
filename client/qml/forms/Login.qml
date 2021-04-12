@@ -169,32 +169,15 @@ Rectangle {
                 width: parent.width
                 height: parent.height
 
-                Button {
+                CustomButton {
                     id: loginButton
                     width: parent.width
                     height: 45
+                    text: qsTr("LOGIN")
                     fontColor: Colors.excelFont
                     fontHoverColor: Colors.excelFont
 
                     onClicked: internal.login()
-
-                    contentItem: Text {
-                        text: qsTr("LOGIN")
-                        font.pointSize: 10
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: "Roboto"
-                        color: excelFontColor
-
-                        scale: loginButton.down ? 0.95 : 1
-
-                        Behavior on scale {
-                            NumberAnimation {
-                                duration: 100
-                                easing.type: Easing.InOutCubic
-                            }
-                        }
-                    }
 
                     background: Rectangle {
                         gradient: Gradient {
@@ -202,8 +185,8 @@ Rectangle {
                             GradientStop { position: 1.0; color: Colors.gradientStop }
                             orientation: Gradient.Horizontal
                         }
-                        scale: loginButton.down ? 0.95 : 1
-                        radius: 5
+                        scale: loginButton.down ? loginButton.scaleSize : 1
+                        radius: loginButton.radius
 
                         Behavior on scale {
                             NumberAnimation {
@@ -214,10 +197,11 @@ Rectangle {
                     }
                 }
 
-                Button {
+                CustomButton {
                     id: registerButton
                     width: parent.width
                     height: 45
+                    text: qsTr("SIGN UP")
                     fontColor: Colors.font
                     fontHoverColor: Colors.excelFont
 
@@ -226,36 +210,11 @@ Rectangle {
                         loginForm.signUpButtonClicked()
                     }
 
-                    contentItem: Text {
-                        text: qsTr("SIGN UP")
-                        font.pointSize: 10
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: "Roboto"
-                        color: registerButton.hovered ? excelFontColor : fontColor
-                        scale: registerButton.down ? 0.95 : 1
-
-                        Behavior on scale {
-                            NumberAnimation {
-                                duration: 100
-                                easing.type: Easing.InOutCubic
-                            }
-                        }
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 100
-                            }
-                        }
-                    }
-
                     background: Rectangle {
-                        color: registerButton.hovered ? fontColor : "transparent"
-                        border.color: fontColor
-                        radius: 5
-                        scale: registerButton.down ? 0.95 : 1
                         color: registerButton.hovered ? Colors.font : "transparent"
                         border.color: Colors.font
+                        radius: registerButton.radius
+                        scale: registerButton.down ? registerButton.scaleSize : 1
 
                         Behavior on scale {
                             NumberAnimation {
