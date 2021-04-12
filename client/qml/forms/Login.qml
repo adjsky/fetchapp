@@ -1,6 +1,7 @@
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick 2.15
+import "colors.js" as Colors
 import "../scripts/scripts.js" as Scripts
 import "../components"
 
@@ -8,23 +9,16 @@ Rectangle {
     id: loginForm
 
     property string errorMessage: ""
-    property color backgroundColor: "#44494d"
-    property color errorColor: "red"
-    property color excelFontColor: "#ffffff"
-    property color fontColor: "#989b9c"
-    property color gradientStart: "#e03614"
-    property color gradientStop: "#de0172"
-    property color fieldBackgroundColor: "#33383c"
-    property color fieldBorderColor: errorMessage !== "" ? errorColor : fieldBackgroundColor
-    property color fieldBorderFocusColor: errorMessage !== "" ? errorColor : backgroundColor
+    property color fieldBorderColor: errorMessage !== "" ? Colors.error : Colors.fieldBackground
+    property color fieldBorderFocusColor: errorMessage !== "" ? Colors.error : Colors.background
 
     signal loginButtonClicked(string email, string password, bool remember)
     signal signUpButtonClicked
 
-    color: backgroundColor
     radius: 10
     implicitHeight: 360
     implicitWidth: 360
+    color: Colors.background
 
     QtObject {
         id: internal
@@ -56,7 +50,7 @@ Rectangle {
 
         Label {
             id: loginLabel
-            color: excelFontColor
+            color: Colors.excelFont
             text: qsTr("Please login")
             font.family: "Roboto"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -74,7 +68,7 @@ Rectangle {
                 id: errorLabel
                 text: qsTranslate("backend", loginForm.errorMessage)
                 font.pointSize: 8
-                color: errorColor
+                color: Colors.error
                 font.family: "Roboto"
                 visible: loginForm.errorMessage !== ""
             }
@@ -136,13 +130,13 @@ Rectangle {
                         width: userControls.height
                         height: userControls.height
                         color: "transparent"
-                        border.color: fontColor
+                        border.color: Colors.font
                         border.width: 1
 
                         Rectangle {
                             width: parent.width
                             height: parent.height
-                            color: excelFontColor
+                            color: Colors.excelFont
                             opacity: rememberBox.checked ? 1 : 0
 
                             Behavior on opacity {
@@ -155,9 +149,9 @@ Rectangle {
 
                     contentItem: Text {
                         text: rememberBox.text
-                        color: fontColor
                         font: rememberBox.font
                         verticalAlignment: Qt.AlignVCenter
+                        color: Colors.font
                         leftPadding: rememberBox.indicator.width + rememberBox.spacing
                     }
                 }
@@ -179,6 +173,8 @@ Rectangle {
                     id: loginButton
                     width: parent.width
                     height: 45
+                    fontColor: Colors.excelFont
+                    fontHoverColor: Colors.excelFont
 
                     onClicked: internal.login()
 
@@ -204,6 +200,8 @@ Rectangle {
                         gradient: Gradient {
                             GradientStop { position: 0.0; color: gradientStart }
                             GradientStop { position: 1.0; color: gradientStop}
+                            GradientStop { position: 0.0; color: Colors.gradientStart }
+                            GradientStop { position: 1.0; color: Colors.gradientStop }
                             orientation: Gradient.Horizontal
                         }
                         scale: loginButton.down ? 0.95 : 1
@@ -222,6 +220,8 @@ Rectangle {
                     id: registerButton
                     width: parent.width
                     height: 45
+                    fontColor: Colors.font
+                    fontHoverColor: Colors.excelFont
 
                     onClicked: {
                         loginForm.errorMessage = ""
@@ -256,6 +256,8 @@ Rectangle {
                         border.color: fontColor
                         radius: 5
                         scale: registerButton.down ? 0.95 : 1
+                        color: registerButton.hovered ? Colors.font : "transparent"
+                        border.color: Colors.font
 
                         Behavior on scale {
                             NumberAnimation {

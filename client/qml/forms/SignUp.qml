@@ -2,26 +2,20 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import "../scripts/scripts.js" as Scripts
+import "colors.js" as Colors
 import "../components"
 
 Rectangle {
     id: signUpForm
 
     property string errorMessage: ""
-    property color backgroundColor: "#44494d"
-    property color errorColor: "red"
-    property color excelFontColor: "#ffffff"
-    property color fontColor: "#989b9c"
-    property color gradientStart: "#e03614"
-    property color gradientStop: "#de0172"
-    property color fieldBackgroundColor: "#33383c"
-    property color fieldBorderColor: errorMessage !== "" ? errorColor : fieldBackgroundColor
-    property color fieldBorderFocusColor: errorMessage !== "" ? errorColor : backgroundColor
+    property color fieldBorderColor: errorMessage !== "" ? Colors.error : Colors.fieldBackground
+    property color fieldBorderFocusColor: errorMessage !== "" ? Colors.error : Colors.background
 
     signal signUpButtonClicked(string email, string password)
     signal returned
 
-    color: backgroundColor
+    color: Colors.background
     radius: 10
     implicitHeight: 360
     implicitWidth: 360
@@ -74,7 +68,7 @@ Rectangle {
                 id: errorLabel
                 text: qsTranslate("backend", signUpForm.errorMessage)
                 font.pointSize: 8
-                color: errorColor
+                color: Colors.error
                 visible: signUpForm.errorMessage !== ""
             }
 
@@ -117,7 +111,7 @@ Rectangle {
 
             Label {
                 id: returnButton
-                color: fontColor
+                color: Colors.font
                 text: qsTr("Already have an account")
                 anchors.left: parent.left
                 anchors.leftMargin: 5
@@ -156,6 +150,8 @@ Rectangle {
             height: 45
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 27
+            fontHoverColor: Colors.excelFont
+            fontColor: Colors.excelFont
 
             onClicked: internal.signUp()
 
@@ -181,6 +177,8 @@ Rectangle {
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: gradientStart }
                     GradientStop { position: 1.0; color: gradientStop }
+                    GradientStop { position: 0.0; color: Colors.gradientStart }
+                    GradientStop { position: 1.0; color: Colors.gradientStop }
                     orientation: Gradient.Horizontal
                 }
                 scale: signUpButton.down ? 0.95 : 1

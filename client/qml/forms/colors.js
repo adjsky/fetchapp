@@ -1,0 +1,7 @@
+const background = "#44494d"
+const error = "red"
+const excelFont = "#ffffff"
+const font = "#989b9c"
+const gradientStart = "#e03614"
+const gradientStop = "#de0172"
+const fieldBackground = "#33383c"
