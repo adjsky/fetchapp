@@ -34,6 +34,7 @@ Rectangle {
                     signUpForm.errorMessage = "Invalid email address"
                 }
                 else {
+                    errorMessage = ""
                     signUpForm.signUpButtonClicked(email, password)
                 }
             }

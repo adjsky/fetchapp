@@ -35,6 +35,7 @@ Rectangle {
                     loginForm.errorMessage = "Invalid email address"
                 }
                 else {
+                    errorMessage = ""
                     loginForm.loginButtonClicked(email, password, rememberBox.checked)
                 }
             }

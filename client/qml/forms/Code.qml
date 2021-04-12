@@ -30,6 +30,7 @@ Rectangle {
                 if (code.length !== 8) {
                     errorMessage = "Invalid code"
                 } else {
+                    errorMessage = ""
                     codeForm.nextButtonClicked(code)
                 }
             }

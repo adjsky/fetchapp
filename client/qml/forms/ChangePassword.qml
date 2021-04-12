@@ -26,11 +26,17 @@ Rectangle {
             if (oldPass === "") {
                 oldPassErrorMessage = "Provide old password"
                 valid = false
+            } else {
+                oldPassErrorMessage = ""
             }
+
             if (newPass === "") {
                 newPassErrorMessage = "Provide new password"
                 valid = false
+            } else {
+                newPassErrorMessage = ""
             }
+
             if (valid) {
                 changePasswordForm.changePassword(oldPass, newPass)
             }

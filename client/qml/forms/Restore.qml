@@ -32,6 +32,7 @@ Rectangle {
                     restoreForm.errorMessage = "Invalid email address"
                 }
                 else {
+                    errorMessage = ""
                     restoreForm.nextButtonClicked(email)
                 }
             }

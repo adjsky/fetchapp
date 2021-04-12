@@ -94,10 +94,10 @@ ApplicationWindow {
                                                 if (response.code === 200) {
                                                     showLoginForm()
                                                 } else {
-                                                    console.log(response.message)
+                                                    forms.item.oldPassErrorMessage = Scripts.capitalize(response.message)
                                                 }
                                             } else {
-                                                console.log(error)
+                                                forms.item.oldPassErrorMessage = forms.item.newPassErrorMessage = error
                                             }
                                         })
             netManager.makeRequest("PUT",
