@@ -44,9 +44,9 @@ Rectangle {
         id: form
         anchors.fill: parent
         anchors.bottomMargin: 40
+        anchors.topMargin: 40
         anchors.rightMargin: 25
         anchors.leftMargin: 25
-        anchors.topMargin: 40
 
         Label {
             id: loginLabel
