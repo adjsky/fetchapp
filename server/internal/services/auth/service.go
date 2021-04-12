@@ -190,7 +190,7 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 		handlers.RespondError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if reqData.Token == "" {
+	if reqData.Code == "" {
 		if reqData.Email == "" {
 			handlers.RespondError(w, http.StatusBadRequest, "no email provided")
 			return
@@ -201,10 +201,10 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 			handlers.RespondError(w, http.StatusBadRequest, "no user with provided email registered")
 			return
 		}
-		token := uniuri.NewLen(8)
+		code := uniuri.NewLen(8)
 		serv.restoreMutex.Lock()
 		defer serv.restoreMutex.Unlock()
-		serv.restoreSessions[token] = restoreSession{
+		serv.restoreSessions[code] = restoreSession{
 			email:     reqData.Email,
 			createdAt: time.Now(),
 		}
@@ -215,7 +215,7 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 		go func() {
 			err := helpers.SendEmail(&serv.config.Smtp,
 				[]string{reqData.Email},
-				[]byte("Subject: Restore account\n"+token))
+				[]byte("Subject: Restore account\n"+code))
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -225,7 +225,7 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 			handlers.RespondError(w, http.StatusBadRequest, "no new or old password provided")
 			return
 		}
-		restoreSession, ok := serv.restoreSessions[reqData.Token]
+		restoreSession, ok := serv.restoreSessions[reqData.Code]
 		if !ok {
 			handlers.RespondError(w, http.StatusBadRequest, "invalid token provided")
 			return
@@ -243,7 +243,7 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 			fmt.Println("hash generating error in restore: ", err)
 		}
 		_, _ = serv.database.Exec("UPDATE Users SET password = ? WHERE ID = ?", hashPassword, userID)
-		delete(serv.restoreSessions, reqData.Token)
+		delete(serv.restoreSessions, reqData.Code)
 		handlers.Respond(w, restoreResponse{Code: http.StatusOK}, http.StatusOK)
 	}
 }

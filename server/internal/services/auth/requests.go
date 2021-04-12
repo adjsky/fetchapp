@@ -14,7 +14,7 @@ type restoreRequest struct {
 	Email       string `json:"email"`
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
-	Token       string `json:"token"`
+	Code       string `json:"code"`
 }
 
 type validRequest struct {
