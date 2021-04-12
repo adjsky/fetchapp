@@ -14,6 +14,7 @@ Rectangle {
 
     signal loginButtonClicked(string email, string password, bool remember)
     signal signUpButtonClicked
+    signal restoreButtonClicked
 
     implicitHeight: 360
     implicitWidth: 360
@@ -154,6 +155,40 @@ Rectangle {
                         leftPadding: rememberBox.indicator.width + rememberBox.spacing
                     }
                 }
+
+                Label {
+                    id: forgotButton
+                    height: parent.height
+                    anchors.right: parent.right
+                    color: Colors.font
+                    text: qsTr("Forgot password")
+                    font.family: "Roboto"
+                    font.pointSize: 10
+                    verticalAlignment: Text.AlignVCenter
+
+                    background: Rectangle {
+                        width: parent.width
+                        height: 1
+                        anchors.bottom: parent.bottom
+                        opacity: forgotButtonArea.containsMouse ? 1 : 0
+
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.InOutCubic
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        id: forgotButtonArea
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+
+                        onClicked: restoreButtonClicked()
+                    }
+                }
             }
         }
 
@@ -240,3 +275,9 @@ Rectangle {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:1.75}
+}
+##^##*/
