@@ -14,8 +14,8 @@ Rectangle {
     signal nextButtonClicked(string code)
     signal backButtonClicked
 
-    implicitHeight: 260
     implicitWidth: 360
+    implicitHeight: 220
     color: Colors.background
     radius: 10
 
