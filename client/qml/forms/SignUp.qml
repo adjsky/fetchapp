@@ -175,8 +175,6 @@ Rectangle {
 
             background: Rectangle {
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: gradientStart }
-                    GradientStop { position: 1.0; color: gradientStop }
                     GradientStop { position: 0.0; color: Colors.gradientStart }
                     GradientStop { position: 1.0; color: Colors.gradientStop }
                     orientation: Gradient.Horizontal
