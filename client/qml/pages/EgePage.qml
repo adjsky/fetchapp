@@ -113,19 +113,19 @@ Rectangle {
                                                      {"Content-Type": "text/plain",
                                                       "Body": Scripts.fileScheme + filePathInput.text
                                                      }])
-                if (err === "") {
-                    let response = JSON.parse(data)
-                    if (response["code"] === 200) {
-                        popup.text = qsTr("Result is") + ": " + JSON.parse(data)["result"]
-                        popup.open()
-                    } else {
-                        console.log(err, data)
-                    }
-                } else {
-                    console.log(err, data)
-                }
-            })
             netManager.finished.connect((data, error) => {
+                                            if (error === "") {
+                                                let response = JSON.parse(data)
+                                                if (response["code"] === 200) {
+                                                    popup.text = qsTr("Result is") + ": " + JSON.parse(data)["result"]
+                                                    popup.open()
+                                                } else {
+                                                    console.log(error, data)
+                                                }
+                                            } else {
+                                                console.log(error, data)
+                                            }
+                                        })
         }
     }
 

@@ -40,12 +40,12 @@ ApplicationWindow {
             let loginComponent = Qt.createComponent("Login.qml")
             loginWindow = loginComponent.createObject(appWindow)
             loginWindow.success.connect(() => {
-                loginWindow.destroy()
-                appWindow.opacity = 1
-            })
+                                            loginWindow.destroy()
+                                            appWindow.opacity = 1
+                                        })
             loginWindow.exit.connect(() => {
-                appWindow.close()
-            })
+                                        appWindow.close()
+                                     })
             loginWindow.show()
         }
     }
@@ -104,12 +104,12 @@ ApplicationWindow {
                     internal.makeActive(settingsButton)
                     pageLoader.source = "pages/SettingsPage.qml"
                     pageLoader.item.signOut.connect(() => {
-                        UserManager.removeToken()
-                        appWindow.opacity = 0
-                        pageLoader.source = "pages/HomePage.qml"
-                        internal.makeActive(homeButton)
-                        internal.showLoginWindow()
-                    })
+                                                        UserManager.removeToken()
+                                                        appWindow.opacity = 0
+                                                        pageLoader.source = "pages/HomePage.qml"
+                                                        internal.makeActive(homeButton)
+                                                        internal.showLoginWindow()
+                                                    })
                 }
             }
         }
