@@ -17,8 +17,8 @@ Rectangle {
 
     color: Colors.background
     radius: 10
-    implicitHeight: 360
     implicitWidth: 360
+    implicitHeight: 360
 
     QtObject {
         id: internal

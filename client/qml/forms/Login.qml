@@ -16,8 +16,8 @@ Rectangle {
     signal signUpButtonClicked
     signal restoreButtonClicked
 
-    implicitHeight: 360
     implicitWidth: 360
+    implicitHeight: 360
     color: Colors.background
     radius: 10
 
