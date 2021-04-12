@@ -65,7 +65,7 @@ func (app *app) initializeServices() {
 	authService := auth.NewService(app.Config, app.Database)
 	go func() {
 		for {
-			time.Sleep(time.Minute * 30)
+			time.Sleep(time.Minute * 5)
 			authService.CheckExpire()
 		}
 	}()

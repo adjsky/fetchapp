@@ -24,7 +24,7 @@ import (
 
 var emailRegex *regexp.Regexp
 
-const restoreSessionDuration = time.Hour
+const restoreSessionDuration = time.Minute * 15
 
 func init() {
 	emailRegex = regexp.MustCompile(`^\S+@\S+$`)
