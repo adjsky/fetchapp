@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>Login.qml</file>
+        <file>Authorize.qml</file>
         <file>forms/Login.qml</file>
         <file>forms/SignUp.qml</file>
         <file>components/CloseButton.qml</file>
@@ -19,5 +19,10 @@
         <file>components/CustomBusyIndicator.qml</file>
         <file>pages/SettingsPage.qml</file>
         <file>images/settings.svg</file>
+        <file>components/CustomButton.qml</file>
+        <file>forms/Restore.qml</file>
+        <file>forms/colors.js</file>
+        <file>forms/Code.qml</file>
+        <file>forms/ChangePassword.qml</file>
     </qresource>
 </RCC>
