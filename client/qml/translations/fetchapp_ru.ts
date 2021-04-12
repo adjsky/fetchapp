@@ -2,6 +2,57 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>ChangePassword</name>
+    <message>
+        <location filename="../forms/ChangePassword.qml" line="47"/>
+        <source>Change password</source>
+        <translation>Изменить пароль</translation>
+    </message>
+    <message>
+        <location filename="../forms/ChangePassword.qml" line="66"/>
+        <source>Old password</source>
+        <translation>Старый пароль</translation>
+    </message>
+    <message>
+        <location filename="../forms/ChangePassword.qml" line="97"/>
+        <source>New password</source>
+        <translation>Новый пароль</translation>
+    </message>
+    <message>
+        <location filename="../forms/ChangePassword.qml" line="129"/>
+        <source>Change</source>
+        <translation>Изменить</translation>
+    </message>
+</context>
+<context>
+    <name>Code</name>
+    <message>
+        <location filename="../forms/Code.qml" line="46"/>
+        <source>Provide code</source>
+        <translation>Предоставьте код</translation>
+    </message>
+    <message>
+        <location filename="../forms/Code.qml" line="60"/>
+        <source>Email with the code was sent to</source>
+        <translation>Письмо с кодом было отправлено на</translation>
+    </message>
+    <message>
+        <location filename="../forms/Code.qml" line="85"/>
+        <source>Code</source>
+        <translation>Код</translation>
+    </message>
+    <message>
+        <location filename="../forms/Code.qml" line="102"/>
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../forms/Code.qml" line="116"/>
+        <source>Next</source>
+        <translation>Дальше</translation>
+    </message>
+</context>
+<context>
     <name>EgePage</name>
     <message>
         <location filename="../pages/EgePage.qml" line="120"/>
@@ -45,34 +96,67 @@
 <context>
     <name>Login</name>
     <message>
-        <location filename="../forms/Login.qml" line="59"/>
+        <location filename="../forms/Login.qml" line="55"/>
         <source>Please login</source>
         <translation>Войдите</translation>
     </message>
     <message>
-        <location filename="../forms/Login.qml" line="98"/>
+        <location filename="../forms/Login.qml" line="94"/>
         <source>Email address</source>
         <translation>Адрес почты</translation>
     </message>
     <message>
-        <location filename="../forms/Login.qml" line="109"/>
+        <location filename="../forms/Login.qml" line="105"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../forms/Login.qml" line="126"/>
+        <location filename="../forms/Login.qml" line="123"/>
         <source>Remember me</source>
         <translation>Запомнить</translation>
     </message>
     <message>
-        <location filename="../forms/Login.qml" line="185"/>
+        <location filename="../forms/Login.qml" line="164"/>
+        <source>Forgot password</source>
+        <translation>Забыл пароль</translation>
+    </message>
+    <message>
+        <location filename="../forms/Login.qml" line="210"/>
         <source>LOGIN</source>
         <translation>ВОЙТИ</translation>
     </message>
     <message>
-        <location filename="../forms/Login.qml" line="231"/>
+        <location filename="../forms/Login.qml" line="238"/>
         <source>SIGN UP</source>
         <translation>ЗАРЕГИСТРИРОВАТЬСЯ</translation>
+    </message>
+</context>
+<context>
+    <name>Restore</name>
+    <message>
+        <location filename="../forms/Restore.qml" line="48"/>
+        <source>Provide email</source>
+        <translation>Предоставьте адрес почты</translation>
+    </message>
+    <message>
+        <location filename="../forms/Restore.qml" line="63"/>
+        <source>Provide your account email</source>
+        <translation>Предоставьте адрес почты аккаунта</translation>
+    </message>
+    <message>
+        <location filename="../forms/Restore.qml" line="88"/>
+        <source>Email</source>
+        <translation>Адрес почты</translation>
+    </message>
+    <message>
+        <location filename="../forms/Restore.qml" line="104"/>
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../forms/Restore.qml" line="118"/>
+        <source>Next</source>
+        <translation>Дальше</translation>
     </message>
 </context>
 <context>
@@ -93,7 +177,7 @@
         <translation>Русский</translation>
     </message>
     <message>
-        <location filename="../pages/SettingsPage.qml" line="66"/>
+        <location filename="../pages/SettingsPage.qml" line="69"/>
         <source>Sign out</source>
         <translation>Выйти</translation>
     </message>
@@ -101,27 +185,27 @@
 <context>
     <name>SignUp</name>
     <message>
-        <location filename="../forms/SignUp.qml" line="59"/>
+        <location filename="../forms/SignUp.qml" line="55"/>
         <source>Sign up</source>
         <translation>Зарегистрироваться</translation>
     </message>
     <message>
-        <location filename="../forms/SignUp.qml" line="97"/>
+        <location filename="../forms/SignUp.qml" line="93"/>
         <source>Email address</source>
         <translation>Адрес почты</translation>
     </message>
     <message>
-        <location filename="../forms/SignUp.qml" line="108"/>
+        <location filename="../forms/SignUp.qml" line="104"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../forms/SignUp.qml" line="120"/>
+        <location filename="../forms/SignUp.qml" line="116"/>
         <source>Already have an account</source>
         <translation>Уже есть аккаунт</translation>
     </message>
     <message>
-        <location filename="../forms/SignUp.qml" line="162"/>
+        <location filename="../forms/SignUp.qml" line="156"/>
         <source>SIGN UP</source>
         <translation>ЗАРЕГИСТРИРОВАТЬСЯ</translation>
     </message>
@@ -173,6 +257,26 @@
         <location filename="translations.hpp" line="9"/>
         <source>Invalid email address</source>
         <translation>Неверный адрес почты</translation>
+    </message>
+    <message>
+        <location filename="translations.hpp" line="10"/>
+        <source>Provide code</source>
+        <translation>Предоставьте код</translation>
+    </message>
+    <message>
+        <location filename="translations.hpp" line="11"/>
+        <source>Provide old password</source>
+        <translation>Предоставьте старый пароль</translation>
+    </message>
+    <message>
+        <location filename="translations.hpp" line="12"/>
+        <source>Provide new password</source>
+        <translation>Предоставьте новый пароль</translation>
+    </message>
+    <message>
+        <location filename="translations.hpp" line="13"/>
+        <source>Old password doesn&apos;t correspond to account password</source>
+        <translation>Старый пароль не соответствует паролю аккаунта</translation>
     </message>
 </context>
 </TS>

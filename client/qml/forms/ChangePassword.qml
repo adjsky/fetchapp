@@ -63,7 +63,7 @@ Rectangle {
                 Label {
                     text: {
                         if (oldPassErrorMessage === "") {
-                            "Old password"
+                            qsTr("Old password")
                         } else {
                             qsTranslate("backend", oldPassErrorMessage)
                         }
@@ -94,7 +94,7 @@ Rectangle {
                 Label {
                     text: {
                         if (newPassErrorMessage === "") {
-                            "New password"
+                            qsTr("New password")
                         } else {
                             qsTranslate("backend", newPassErrorMessage)
                         }
