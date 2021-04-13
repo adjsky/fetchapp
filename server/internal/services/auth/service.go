@@ -205,6 +205,11 @@ func (serv *service) handleRestoreNonAuth(w http.ResponseWriter, req *http.Reque
 		code := uniuri.NewLen(8)
 		serv.restoreMutex.Lock()
 		defer serv.restoreMutex.Unlock()
+		for k, v := range serv.restoreSessions {
+			if v.email == reqData.Email {
+				delete(serv.restoreSessions, k)
+			}
+		}
 		serv.restoreSessions[code] = restoreSession{
 			email:     reqData.Email,
 			createdAt: time.Now(),
