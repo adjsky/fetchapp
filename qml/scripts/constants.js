@@ -1,1 +1,1 @@
-const serverPath = "http://localhost:8080"
+const serverPath = "https://fetchappserver.herokuapp.com/"
