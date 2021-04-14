@@ -15,8 +15,8 @@ namespace serializable
     public:
         QString language = "en";
 
-        bool operator==(const ConfigData& other) {
-            return other.language == language;
+        bool operator!=(const ConfigData& other) {
+            return other.language != language;
         }
     };
 
