@@ -51,10 +51,12 @@ Rectangle {
                                             if (error === "") {
                                                 let response = JSON.parse(data)
                                                 if (response.code === 200) {
-                                                    let model = response["questions_available"].split(", ")
-                                                    if (model.length !== 0) {
-                                                        questionsList.model = model
-                                                        setQuestionTypesModel(model[0])
+                                                    if (questionsList) {
+                                                        let model = response["questions_available"].split(", ")
+                                                        if (model.length !== 0) {
+                                                            questionsList.model = model
+                                                            setQuestionTypesModel(model[0])
+                                                        }
                                                     }
                                                 } else {
                                                     console.log(response.message)
@@ -74,16 +76,18 @@ Rectangle {
                                             if (error === "") {
                                                 let response = JSON.parse(data)
                                                 if (response.code === 200) {
-                                                    let model = []
-                                                    let listData = JSON.parse(data)["types_available"].split("\n")
-                                                    listData.forEach(data => {
-                                                                        let info = Scripts.splitByIndex(data, data.indexOf(" "))
-                                                                        let type = info[0]
-                                                                        let desc = info[1]
-                                                                        model.push({"type": type, "desc": desc})
-                                                                     })
-                                                    questionTypesList.model = model
-                                                    showPage()
+                                                    if (questionTypesList) {
+                                                        let model = []
+                                                        let listData = JSON.parse(data)["types_available"].split("\n")
+                                                        listData.forEach(data => {
+                                                                            let info = Scripts.splitByIndex(data, data.indexOf(" "))
+                                                                            let type = info[0]
+                                                                            let desc = info[1]
+                                                                            model.push({"type": type, "desc": desc})
+                                                                         })
+                                                        questionTypesList.model = model
+                                                        showPage()
+                                                    }
                                                 } else {
                                                     console.log(response.message)
                                                 }
