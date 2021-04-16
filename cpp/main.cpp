@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
+#include <QIcon>
 
 #include "UserManager/UserManager.hpp"
 #include "NetworkManager/NetworkManager.hpp"
@@ -31,6 +32,7 @@ int main(int argc, char* argv[])
     QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/Roboto-Medium.ttf"));
     QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/NotoSans-Regular.ttf"));
     QFont font{ QStringLiteral("Noto Sans"), 10 };
+    app.setWindowIcon(QIcon{ ":/images/icon.png" });
     app.setFont(font);
     app.setOrganizationName(QStringLiteral("adjsky"));
     app.setApplicationName(QStringLiteral("fetchapp"));

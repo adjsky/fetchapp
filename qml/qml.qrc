@@ -24,5 +24,6 @@
         <file>forms/colors.js</file>
         <file>forms/Code.qml</file>
         <file>forms/ChangePassword.qml</file>
+        <file>images/icon.png</file>
     </qresource>
 </RCC>
