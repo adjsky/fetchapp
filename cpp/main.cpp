@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/Roboto-Medium.ttf"));
     QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/NotoSans-Regular.ttf"));
     QFont font{ QStringLiteral("Noto Sans"), 10 };
-    app.setWindowIcon(QIcon{ ":/images/icon.png" });
+    app.setWindowIcon(QIcon{ QStringLiteral(":/images/icon.png") });
     app.setFont(font);
     app.setOrganizationName(QStringLiteral("adjsky"));
     app.setApplicationName(QStringLiteral("fetchapp"));
