@@ -8,21 +8,22 @@ using nlohmann::json;
 
 namespace serializable
 {
-    struct ConfigData
+struct ConfigData
+{
+    Q_GADGET
+    Q_PROPERTY(QString language MEMBER language)
+public:
+    QString language = "en";
+
+    bool operator!=(const ConfigData& other)
     {
-        Q_GADGET
-        Q_PROPERTY(QString language MEMBER language)
-    public:
-        QString language = "en";
+        return other.language != language;
+    }
+};
 
-        bool operator!=(const ConfigData& other) {
-            return other.language != language;
-        }
-    };
+void to_json(json& j, const ConfigData& cfg);
 
-    void to_json(json& j, const ConfigData& cfg);
-
-    void from_json(const json& j, ConfigData& cfg);
+void from_json(const json& j, ConfigData& cfg);
 }
 
 class Config : public QObject
