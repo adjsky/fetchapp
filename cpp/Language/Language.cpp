@@ -4,25 +4,24 @@
 
 Language::Language(QQmlEngine& engine) :
     QObject{ },
+    translators_{ },
     installedTranslator_{ nullptr },
     engine_{ engine }
 {
     const QString& appName{ qApp->applicationName() };
-    ruTranslator_ = new QTranslator{ this };
+    QTranslator* ruTranslator_ = new QTranslator{ this };
     ruTranslator_->load(appName + "_ru");
+    translators_["ru"] = ruTranslator_;
 }
 
 void Language::set(const QString& language)
 {
-    if (language == "ru") {
-        qApp->installTranslator(ruTranslator_);
-        installedTranslator_ = ruTranslator_;
+    if (installedTranslator_ != nullptr) {
+        qApp->removeTranslator(installedTranslator_);
     }
-    else {
-        if (installedTranslator_) {
-            qApp->removeTranslator(installedTranslator_);
-            installedTranslator_ = nullptr;
-        }
+    auto it{ translators_.find(language) };
+    if (it != translators_.end()) {
+        qApp->installTranslator(*it);
     }
 
     engine_.retranslate();

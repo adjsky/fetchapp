@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QTranslator>
+#include <QMap>
 
 class Language : public QObject
 {
@@ -14,7 +15,7 @@ public:
     Q_INVOKABLE void set(const QString& language);
 
 private:
-    QTranslator* ruTranslator_;
+    QMap<QString, QTranslator*> translators_;
     QTranslator* installedTranslator_;
     QQmlEngine& engine_;
 };
