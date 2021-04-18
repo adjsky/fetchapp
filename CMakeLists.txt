@@ -28,13 +28,14 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick Widgets LinguistTools REQUIRED)
 find_package(fmt)
 
-file(GLOB TRANSLATION_FILES ${CMAKE_CURRENT_SOURCE_DIR}/qml/translations/*.ts)
-
+file(GLOB TRANSLATION_FILES ${CMAKE_CURRENT_SOURCE_DIR}/translations/*.ts)
+set_source_files_properties(${TRANSLATION_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_SOURCE_DIR}/translations")
 qt5_add_translation(TRANSLATION_QM ${TRANSLATION_FILES})
 add_custom_target(translations ALL DEPENDS ${TRANSLATION_QM})
 
 set(PROJECT_SOURCES
         qml/qml.qrc
+        translations/translations.qrc
         cpp/main.cpp
         cpp/UserManager/UserManager.cpp
         cpp/UserManager/UserManager.hpp

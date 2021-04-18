@@ -10,7 +10,7 @@ Language::Language(QQmlEngine& engine) :
 {
     const QString& appName{ qApp->applicationName() };
     QTranslator* ruTranslator_ = new QTranslator{ this };
-    ruTranslator_->load(appName + "_ru");
+    ruTranslator_->load(":/translations/" + appName + "_ru");
     translators_["ru"] = ruTranslator_;
 }
 
