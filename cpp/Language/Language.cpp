@@ -19,9 +19,12 @@ void Language::set(const QString& language)
     if (installedTranslator_ != nullptr) {
         qApp->removeTranslator(installedTranslator_);
     }
-    auto it{ translators_.find(language) };
-    if (it != translators_.end()) {
-        qApp->installTranslator(*it);
+    if (language != "en") {
+        auto it{ translators_.find(language) };
+        if (it != translators_.end()) {
+            qApp->installTranslator(*it);
+        }
+        installedTranslator_ = *it;
     }
 
     engine_.retranslate();
