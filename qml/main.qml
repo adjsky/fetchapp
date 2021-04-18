@@ -15,8 +15,7 @@ ApplicationWindow {
     minimumWidth: 640
     height: 720
     minimumHeight: 720
-    visible: true
-    opacity: 0
+    visible: false
     title: Qt.application.name
 
     QtObject {
@@ -41,9 +40,10 @@ ApplicationWindow {
             loginWindow = loginComponent.createObject(appWindow)
             loginWindow.success.connect(() => {
                                             loginWindow.destroy()
-                                            appWindow.opacity = 1
+                                            appWindow.show()
                                         })
             loginWindow.exit.connect(() => {
+                                        appWindow.show()
                                         appWindow.close()
                                      })
             loginWindow.show()
@@ -105,7 +105,7 @@ ApplicationWindow {
                     pageLoader.source = "pages/SettingsPage.qml"
                     pageLoader.item.signOut.connect(() => {
                                                         UserManager.removeToken()
-                                                        appWindow.opacity = 0
+                                                        appWindow.hide()
                                                         pageLoader.source = "pages/HomePage.qml"
                                                         internal.makeActive(homeButton)
                                                         internal.showLoginWindow()
