@@ -105,7 +105,7 @@ Rectangle {
         }
 
         function getResultFromServer() {
-            let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + questionsList.currentValue)
+            let netManager = new NetworkManager(Constants.serverPath + "/api/ege/" + questionsList.currentValue + "/solve")
             netManager.setAuthToken(UserManager.getToken())
             let body = {"type": parseInt(questionTypesList.currentValue)}
             if (questionTypesList.currentValue === "3") {
