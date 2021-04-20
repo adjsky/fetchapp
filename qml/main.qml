@@ -36,7 +36,6 @@ ApplicationWindow {
             let language = Config.settings.language
             if (language === "") {
                 let localeLanguage = Qt.locale().name.substring(0, 2)
-                console.log(localeLanguage)
                 Language.set(localeLanguage)
                 Config.settings.language = localeLanguage
             } else {
