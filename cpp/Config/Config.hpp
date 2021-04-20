@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 
 #include <QObject>
+#include <QDir>
 #include "../Utility/json.hpp"
 
 using nlohmann::json;
@@ -13,7 +14,7 @@ struct ConfigData
     Q_GADGET
     Q_PROPERTY(QString language MEMBER language)
 public:
-    QString language = "en";
+    QString language;
 
     bool operator!=(const ConfigData& other)
     {
@@ -34,10 +35,13 @@ public:
     Config();
     ~Config();
 
+    void load();
     void save();
+    void setSavePath(const QString& path);
 
 private:
     serializable::ConfigData data_;
+    QDir savePath_;
 };
 
 #endif // CONFIG_HPP

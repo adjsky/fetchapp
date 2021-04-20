@@ -2,6 +2,7 @@
 #define TOKENMANAGER_H
 
 #include <QObject>
+#include <QDir>
 
 class UserManager : public QObject
 {
@@ -16,9 +17,11 @@ public:
 
     Q_INVOKABLE void removeToken();
 
+    void setSavePath(const QString& path);
+
 private:
     QString cachedToken_;
-    static QString filePath_;
+    QDir savePath_;
 };
 
 #endif // TOKENMANAGER_H

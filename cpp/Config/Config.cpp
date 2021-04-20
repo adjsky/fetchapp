@@ -1,9 +1,10 @@
 #include <fstream>
 #include <QDebug>
+#include <QString>
 
 #include "Config.hpp"
 
-const char* config_path{ "config.json" };
+const QString configFileName{ QStringLiteral("config.json") };
 
 void serializable::to_json(json& j, const ConfigData& cfg)
 {
@@ -17,9 +18,19 @@ void serializable::from_json(const json& j, ConfigData& cfg)
 
 Config::Config() :
     QObject{ },
-    data_{ }
+    data_{ },
+    savePath_{ }
 {
-    std::ifstream file{ config_path };
+}
+
+Config::~Config()
+{
+    save();
+}
+
+void Config::load()
+{
+    std::ifstream file{ savePath_.filePath(configFileName).toStdString() };
     if (file.is_open()) {
         json j{ };
         try {
@@ -37,14 +48,15 @@ Config::Config() :
     }
 }
 
-Config::~Config()
-{
-    save();
-}
-
 void Config::save()
 {
     json j{ data_ };
-    std::ofstream file{ config_path, std::ios::out | std::ios::trunc };
+    std::ofstream file{ savePath_.filePath(configFileName).toStdString(),
+                        std::ios::out | std::ios::trunc };
     file << j.at(0).dump(4) << std::endl;
+}
+
+void Config::setSavePath(const QString& path)
+{
+    savePath_.setPath(path);
 }

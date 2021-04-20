@@ -4,11 +4,12 @@
 
 #include "UserManager.hpp"
 
-QString UserManager::filePath_{ "token.txt" };
+QString tokenFileName{ "token.txt" };
 
 UserManager::UserManager(QObject* parent) :
     QObject{ parent },
-    cachedToken_{ }
+    cachedToken_{ },
+    savePath_{ }
 {
 }
 
@@ -17,7 +18,7 @@ void UserManager::saveToken(const QString& token,
 {
     cachedToken_ = token;
     if (saveToFile) {
-        QFile tokenFile{ filePath_ };
+        QFile tokenFile{ savePath_.filePath(tokenFileName) };
         if (!tokenFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
             return; // todo
         }
@@ -29,7 +30,7 @@ void UserManager::saveToken(const QString& token,
 QString UserManager::getToken()
 {
     if (cachedToken_ == "") {
-        QFile tokenFile{ filePath_ };
+        QFile tokenFile{ savePath_.filePath(tokenFileName) };
         if (!tokenFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             return cachedToken_;
         }
@@ -42,5 +43,10 @@ QString UserManager::getToken()
 void UserManager::removeToken()
 {
     cachedToken_ = "";
-    QFile::remove(filePath_);
+    QFile::remove(savePath_.filePath(tokenFileName));
+}
+
+void UserManager::setSavePath(const QString& path)
+{
+    savePath_.setPath(path);
 }

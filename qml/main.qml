@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQml 2.15
 import UserManager 1.0
 import Config 1.0
 import Language 1.0
@@ -32,7 +33,15 @@ ApplicationWindow {
         }
 
         function initialize() {
-            Language.set(Config.settings.language)
+            let language = Config.settings.language
+            if (language === "") {
+                let localeLanguage = Qt.locale().name.substring(0, 2)
+                console.log(localeLanguage)
+                Language.set(localeLanguage)
+                Config.settings.language = localeLanguage
+            } else {
+                Language.set(language)
+            }
         }
 
         function showLoginWindow() {

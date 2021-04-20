@@ -16,11 +16,12 @@ Language::Language(QQmlEngine& engine) :
 
 void Language::set(const QString& language)
 {
+    QString lowerLanguage{ language.toLower() };
     if (installedTranslator_ != nullptr) {
         qApp->removeTranslator(installedTranslator_);
     }
-    if (language != "en") {
-        auto it{ translators_.find(language) };
+    if (!lowerLanguage.startsWith("en")) {
+        auto it{ translators_.find(lowerLanguage.left(2)) };
         if (it != translators_.end()) {
             qApp->installTranslator(*it);
         }
