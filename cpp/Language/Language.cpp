@@ -24,8 +24,8 @@ void Language::set(const QString& language)
         auto it{ translators_.find(lowerLanguage.left(2)) };
         if (it != translators_.end()) {
             qApp->installTranslator(*it);
+            installedTranslator_ = *it;
         }
-        installedTranslator_ = *it;
     }
 
     engine_.retranslate();
